@@ -11,5 +11,6 @@ def index():
     return "Hello, World!"
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port="8000", debug=True)
+    app.run(debug=True) #default port is 5000, look at the terminal to see the port number
+    #app.run(host="0.0.0.0", port="8000", debug=True)
     #serve(app, host="0.0.0.0", port="8000")
