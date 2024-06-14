@@ -2,8 +2,8 @@ FROM python:3.12.2
 
 WORKDIR /w2a-scraper/app
 
-COPY requirements.txt requirements.txt
-RUN pip3 install -r requirements.txt
+COPY config/requirements.txt config/requirements.txt
+RUN pip3 install -r config/requirements.txt
 
 COPY . .
 
