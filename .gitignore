@@ -1,2 +1,13 @@
-.venv
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+.venv/
+
+# Ignore local config files
 .env
+
+# Unit test / coverage reports
+.pytest_cache/

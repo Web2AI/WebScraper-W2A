@@ -1,0 +1,25 @@
+# Ignore Python bytecode files
+*.pyc
+__pycache__
+
+# Ignore virtual environments
+.venv/
+
+# Ignore local config files
+.env
+
+# Ignore logs
+*.log
+
+# Ignore build artifacts
+build/
+dist/
+
+# Ignore source control metadata
+.git/
+.gitignore
+
+# Ignore IDE/editor configurations
+.idea/
+.vscode/
+.DS_Store

@@ -7,7 +7,7 @@ RUN pip3 install -r requirements.txt
 
 COPY . .
 
-ENV FLASK_APP=app.app
+ENV FLASK_APP=src.app
 ENV FLASK_ENV=development
 
 EXPOSE 5000
