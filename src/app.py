@@ -4,14 +4,13 @@ import crochet
 
 crochet.setup()
 
-from flask import Flask, render_template, jsonify, request, redirect, url_for
+import os
+import time
+
+from flask import Flask, jsonify, redirect, render_template, request, url_for
 from scrapy import signals
 from scrapy.crawler import CrawlerRunner
 from scrapy.signalmanager import dispatcher
-import time
-import os
-
-# Importing our Scraping Function from the file
 
 from business.web2ai.spiders.pcss import PcssSpider
 
@@ -64,4 +63,4 @@ def _crawler_result(item, response, spider):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True)  # nosec

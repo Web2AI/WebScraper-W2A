@@ -1,6 +1,7 @@
+import datetime
+
 import scrapy
 from bs4 import BeautifulSoup
-import datetime
 
 
 class PcssSpider(scrapy.Spider):
