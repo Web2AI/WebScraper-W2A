@@ -6,7 +6,6 @@
 import scrapy
 
 
-class Web2AiItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+class StrippedHtmlItem(scrapy.Item):
+    url = scrapy.Field()
+    html = scrapy.Field()

@@ -11,3 +11,6 @@ __pycache__/
 
 # Unit test / coverage reports
 .pytest_cache/
+
+# Processed files
+pcss-*.html
