@@ -13,13 +13,13 @@ crochet.setup()  # Initialize crochet
 app = Flask(__name__)
 
 # Store results and errors per request
-request_results = {}
+request_results: dict[int, list] = {}
 request_errors = {}
 
 
 # Scrapy signal handler for when the spider closes
 def _spider_closing(spider: PcssSpider, reason):
-    crochet.stop()  # Stop crochet once spider is done
+    pass # cleanup
 
 
 # This will append the data to the output data list.
