@@ -5,9 +5,18 @@
 
 
 # useful for handling different item types with a single interface
+import datetime
+
 from itemadapter import ItemAdapter
 
 
-class Web2AiPipeline:
+class SaveToHtmlFilePipeline:
     def process_item(self, item, spider):
+        adapter = ItemAdapter(item)
+        timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+        filename = f"pcss-{adapter.get('url')}-{timestamp}.html"
+
+        with open(filename, "w") as f:
+            f.write(adapter.get("html"))
+
         return item

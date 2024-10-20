@@ -1,16 +1,18 @@
-import datetime
-
 import scrapy
 from bs4 import BeautifulSoup
+
+from business.web2ai.items import StrippedHtmlItem
 
 
 class PcssSpider(scrapy.Spider):
     name = "pcss"
 
     def __init__(
-        self, url="", **kwargs
+        self, url, request_id, **kwargs
     ):  # The category variable will have the input URL.
         self.url = url
+        self.request_id = request_id
+        print(self.request_id)
         super().__init__(**kwargs)
 
     custom_settings = {
@@ -39,9 +41,8 @@ class PcssSpider(scrapy.Spider):
         yield request
 
     def parse(self, response):
-        page = response.url.split("/")[-2]
-        timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-        filename = f"pcss-{page}-{timestamp}.html"
+        item = StrippedHtmlItem()
+        item["html"] = self.stripTags(response).decode()
+        item["url"] = response.url.split("/")[-2]
 
-        with open(filename, "wb") as f:
-            f.write(self.stripTags(response))
+        yield item
