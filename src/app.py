@@ -19,7 +19,7 @@ request_errors = {}
 
 # Scrapy signal handler for when the spider closes
 def _spider_closing(spider: PcssSpider, reason):
-    pass # cleanup
+    pass  # cleanup
 
 
 # This will append the data to the output data list.
