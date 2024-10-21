@@ -84,12 +84,14 @@ class PcssSpider(scrapy.Spider):
         logger.debug(f"Primary URL: {item['url']}, HTML Length: {len(item['html'])}")
 
         timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-        filename = f"out/PRIMARY-{item['url']}-{timestamp}.html"
+        filename = f"../out/PRIMARY-{item['url']}-{timestamp}.html"
 
         os.makedirs(os.path.dirname(filename), exist_ok=True)
         with open(filename, "w", encoding="utf-8") as f:
             f.write(item["html"])
 
+        self.primary_data = item["html"]
+        self.filter_html()
         # Yield the primary item
         yield item
 
@@ -103,11 +105,24 @@ class PcssSpider(scrapy.Spider):
         logger.debug(f"Secondary URL: {item['url']}, HTML Length: {len(item['html'])}")
 
         timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-        filename = f"out/SECONDARY-{item['url']}-{timestamp}.html"
+        filename = f"../out/SECONDARY-{item['url']}-{timestamp}.html"
 
         os.makedirs(os.path.dirname(filename), exist_ok=True)
         with open(filename, "w", encoding="utf-8") as f:
             f.write(item["html"])
 
+        self.secondary_data = item["html"]
+        self.filter_html()
         # Yield the secondary item
         yield item
+
+    def filter_html(self):
+        print("Filtering HTML")
+
+        # Print debug information about primary and secondary data
+        print(f"Primary data available: {self.primary_data is not None}")
+        print(f"Secondary data available: {self.secondary_data is not None}")
+
+        if self.primary_data is not None and self.secondary_data is not None:
+            html_filter = HtmlFilter(self.primary_data, self.secondary_data)
+            html_filter.filter_output()

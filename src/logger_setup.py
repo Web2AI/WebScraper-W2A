@@ -33,7 +33,7 @@ class CustomFormatter(logging.Formatter):
 # Configure logging
 def configure_logger():
     logging.basicConfig(
-        level=logging.DEBUG,  # Set log level to DEBUG
+        level=logging.ERROR,  # Set log level to DEBUG
         format="%(asctime)s [%(levelname)s] %(message)s",
         handlers=[logging.StreamHandler()],
     )
