@@ -15,7 +15,10 @@ class SaveToHtmlFilePipeline:
     def process_item(self, item, spider):
         adapter = ItemAdapter(item)
         timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-        filename = f"out/pcss-{adapter.get('url')}-{timestamp}.html"
+        output_dir = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), "../../../out")
+        )
+        filename = f"{output_dir}/pcss-{adapter.get('url')}-{timestamp}.html"
 
         os.makedirs(os.path.dirname(filename), exist_ok=True)
         with open(filename, "w") as f:

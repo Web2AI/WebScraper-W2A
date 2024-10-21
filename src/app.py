@@ -17,7 +17,7 @@ crochet.setup()
 app = Flask(__name__)
 
 # Set up logging
-configure_logger()
+logger = configure_logger()
 
 # Store results and errors per request
 request_results: dict[int, list] = {}
@@ -27,13 +27,13 @@ request_errors = {}
 # Scrapy signal handler for when the spider closes
 def _spider_closing(spider: PcssSpider, reason):
     request_id = spider.request_id
-    app.logger.debug(f"Spider closed: {reason} for request {request_id}")
+    logger.debug(f"Spider closed: {reason} for request {request_id}")
 
 
 # Append the data to the output data list.
 def _crawler_result(item, response, spider: PcssSpider):
     request_results[spider.request_id].append(dict(item))
-    app.logger.debug(f"Item scraped for request {spider.request_id}")
+    logger.debug(f"Item scraped for request {spider.request_id}")
 
 
 # By default Flask will come into this when we run the file
@@ -54,7 +54,7 @@ def scrape():
     try:
         # Use a unique ID (request context ID) to store results for each user request
         request_id = id(request)
-        app.logger.debug(f"Starting scrape for request {request_id}")
+        logger.debug(f"Starting scrape for request {request_id}")
 
         # Initialize the result storage for this request
         request_results[request_id] = []
@@ -71,7 +71,7 @@ def scrape():
         return jsonify({"results": request_results[request_id]}), 200
 
     except Exception as e:
-        app.logger.exception("Exception occurred during scraping")
+        logger.exception("Exception occurred during scraping")
         return jsonify({"error": str(e)}), 500
 
 
@@ -80,13 +80,13 @@ def scrape_with_crochet(primary_url, secondary_url, request_id):
     global request_results, request_errors
 
     settings = Settings()
-    # settings.set(
-    #     "ITEM_PIPELINES",
-    #     {
-    #         "business.web2ai.pipelines.SaveToHtmlFilePipeline": 300,
-    #     },
-    # )
-    settings.set("LOG_LEVEL", "DEBUG")
+    settings.set(
+        "ITEM_PIPELINES",
+        {
+            "business.web2ai.pipelines.SaveToHtmlFilePipeline": 300,
+        },
+    )
+    settings.set("LOG_LEVEL", "INFO")
 
     # Setting up Scrapy Crawler
     dispatcher.connect(_crawler_result, signal=signals.item_scraped)

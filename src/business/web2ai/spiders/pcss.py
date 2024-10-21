@@ -55,40 +55,40 @@ class PcssSpider(scrapy.Spider):
             logger.debug(f"Starting request for secondary URL: {self.secondary_url}")
             yield scrapy.Request(self.secondary_url, callback=self.parse_secondary)
 
-    def parse(self, response):
-        item = StrippedHtmlItem()
-        item["html"] = self.stripTags(response)
-        item["url"] = response.url.split("/")[2]
+    # def parse(self, response):
+    #     item = StrippedHtmlItem()
+    #     item["html"] = self.stripTags(response)
+    #     item["url"] = response.url.split("/")[2]
 
-        # Log the scraped URL and HTML length for debugging
-        logger.debug(f"Scraped URL: {item["url"]}")
-        logger.debug(f"HTML Length: {len(item["html"])}")
+    #     # Log the scraped URL and HTML length for debugging
+    #     logger.debug(f"Scraped URL: {item["url"]}")
+    #     logger.debug(f"HTML Length: {len(item["html"])}")
 
-        # Save the HTML to a file
-        timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-        filename = f"out/TEST-{item['url']}-{timestamp}.html"
-        os.makedirs(os.path.dirname(filename), exist_ok=True)
-        with open(filename, "w", encoding="utf-8") as f:
-            f.write(item["html"])
+    #     # Save the HTML to a file
+    #     timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    #     filename = f"out/TEST-{item['url']}-{timestamp}.html"
+    #     os.makedirs(os.path.dirname(filename), exist_ok=True)
+    #     with open(filename, "w", encoding="utf-8") as f:
+    #         f.write(item["html"])
 
-        # Optionally yield the item to trigger the pipeline
-        yield item
+    #     # Optionally yield the item to trigger the pipeline
+    #     yield item
 
     def parse_primary(self, response):
         logger.debug(f"Parsing response from primary URL: {response.url}")
         item = StrippedHtmlItem()
         item["html"] = self.stripTags(response)
-        item["url"] = response.url.split("/")[2]
+        item["url"] = "".join(response.url.split("/")[2:])
 
         # Log the scraped primary URL and HTML length
         logger.debug(f"Primary URL: {item['url']}, HTML Length: {len(item['html'])}")
 
-        timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-        filename = f"../out/PRIMARY-{item['url']}-{timestamp}.html"
+        # timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+        # filename = f"../out/PRIMARY-{item['url']}-{timestamp}.html"
 
-        os.makedirs(os.path.dirname(filename), exist_ok=True)
-        with open(filename, "w", encoding="utf-8") as f:
-            f.write(item["html"])
+        # os.makedirs(os.path.dirname(filename), exist_ok=True)
+        # with open(filename, "w", encoding="utf-8") as f:
+        #     f.write(item["html"])
 
         self.primary_data = item["html"]
         self.filter_html()
@@ -99,17 +99,17 @@ class PcssSpider(scrapy.Spider):
         logger.debug(f"Parsing response from secondary URL: {response.url}")
         item = StrippedHtmlItem()
         item["html"] = self.stripTags(response)
-        item["url"] = response.url.split("/")[2]
+        item["url"] = "".join(response.url.split("/")[2:])
 
         # Log the scraped secondary URL and HTML length
         logger.debug(f"Secondary URL: {item['url']}, HTML Length: {len(item['html'])}")
 
-        timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-        filename = f"../out/SECONDARY-{item['url']}-{timestamp}.html"
+        # timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+        # filename = f"../out/SECONDARY-{item['url']}-{timestamp}.html"
 
-        os.makedirs(os.path.dirname(filename), exist_ok=True)
-        with open(filename, "w", encoding="utf-8") as f:
-            f.write(item["html"])
+        # os.makedirs(os.path.dirname(filename), exist_ok=True)
+        # with open(filename, "w", encoding="utf-8") as f:
+        #     f.write(item["html"])
 
         self.secondary_data = item["html"]
         self.filter_html()
@@ -120,9 +120,17 @@ class PcssSpider(scrapy.Spider):
         print("Filtering HTML")
 
         # Print debug information about primary and secondary data
-        print(f"Primary data available: {self.primary_data is not None}")
-        print(f"Secondary data available: {self.secondary_data is not None}")
+        logger.debug(f"Primary data available: {self.primary_data is not None}")
+        logger.debug(f"Secondary data available: {self.secondary_data is not None}")
 
         if self.primary_data is not None and self.secondary_data is not None:
-            html_filter = HtmlFilter(self.primary_data, self.secondary_data)
+
+            output_dir = os.path.abspath(
+                os.path.join(os.path.dirname(__file__), "../../../../out")
+            )
+
+            html_filter = HtmlFilter(
+                self.primary_data, self.secondary_data, output_dir=output_dir
+            )
+
             html_filter.filter_output()

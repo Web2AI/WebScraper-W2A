@@ -1,12 +1,16 @@
 from bs4 import BeautifulSoup, Comment, Tag
 
+from logger_setup import configure_logger
+
+logger = configure_logger()
+
 
 class HtmlFilter:
-    def __init__(self, primary_data, secondary_data):
+    def __init__(self, primary_data, secondary_data, output_dir):
         self.primary_data = primary_data
         self.secondary_data = secondary_data
-        print("Html Filter initialized")
-        print(type(primary_data))
+        self.output_dir = output_dir
+        logger.info("HtmlFilter initialized")
 
     def initial_clean(self, data):
 
@@ -83,7 +87,6 @@ class HtmlFilter:
 
         return unique_texts
 
-
     def filter_output(self):
 
         soup1 = BeautifulSoup(self.primary_data, "html.parser")
@@ -93,9 +96,11 @@ class HtmlFilter:
         soup2 = self.initial_clean(soup2)
 
         common_structure = self.create_common_structure(soup1, soup2)
-        with open("common_structure.html", "w", encoding="utf-8") as file:
+        common_structure_path = f"{self.output_dir}/common_structure.html"
+        with open(common_structure_path, "w", encoding="utf-8") as file:
             file.write(str(common_structure))
 
-        unique_texts1 = self.remove_common_parts(soup1, common_structure)
-        with open("unique_texts.html", "w", encoding="utf-8") as file:
-            file.write(str(unique_texts1))
+        unique_texts = self.remove_common_parts(soup1, common_structure)
+        unique_text_path = f"{self.output_dir}/unique_texts.html"
+        with open(unique_text_path, "w", encoding="utf-8") as file:
+            file.write(str(unique_texts))
