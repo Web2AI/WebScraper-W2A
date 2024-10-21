@@ -1,7 +1,7 @@
 import scrapy
 from bs4 import BeautifulSoup
 
-from business.web2ai.items import StrippedHtmlItem
+from business.scraper.items.stripped_html_item import StrippedHtmlItem
 
 
 class PcssSpider(scrapy.Spider):
