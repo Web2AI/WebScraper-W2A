@@ -1,5 +1,6 @@
 # logger_config.py
 import logging
+
 import colorama
 from colorama import Fore, Style
 from scrapy.utils.log import configure_logging
