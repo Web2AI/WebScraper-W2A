@@ -11,8 +11,9 @@ from business.web2ai.items import StrippedHtmlItem
 class PcssSpider(scrapy.Spider):
     name = "pcss"
 
-    def __init__(self, url, request_id, **kwargs):
-        self.url = url
+    def __init__(self, primary_url, secondary_url, request_id, **kwargs):
+        self.primary_url = primary_url
+        self.secondary_url = secondary_url
         self.request_id = request_id
         self.logger.debug(f"Spider initialized with request_id: {self.request_id}")
         super().__init__(**kwargs)
@@ -40,8 +41,16 @@ class PcssSpider(scrapy.Spider):
         return soup.prettify()
 
     def start_requests(self):
-        request = scrapy.Request(self.url, callback=self.parse)
-        yield request
+        # Request the primary URL
+        self.logger.debug(f"Starting request for primary URL: {self.primary_url}")
+        yield scrapy.Request(self.primary_url, callback=self.parse_primary)
+
+        # Request the secondary URL
+        if self.secondary_url:
+            self.logger.debug(
+                f"Starting request for secondary URL: {self.secondary_url}"
+            )
+            yield scrapy.Request(self.secondary_url, callback=self.parse_secondary)
 
     def parse(self, response):
         item = StrippedHtmlItem()
@@ -60,4 +69,46 @@ class PcssSpider(scrapy.Spider):
             f.write(item["html"])
 
         # Optionally yield the item to trigger the pipeline
+        yield item
+
+    def parse_primary(self, response):
+        self.logger.debug(f"Parsing response from primary URL: {response.url}")
+        item = StrippedHtmlItem()
+        item["html"] = self.stripTags(response)
+        item["url"] = response.url.split("/")[2]
+
+        # Log the scraped primary URL and HTML length
+        self.logger.debug(
+            f"Primary URL: {item['url']}, HTML Length: {len(item['html'])}"
+        )
+
+        timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+        filename = f"out/PRIMARY-{item['url']}-{timestamp}.html"
+
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
+        with open(filename, "w", encoding="utf-8") as f:
+            f.write(item["html"])
+
+        # Yield the primary item
+        yield item
+
+    def parse_secondary(self, response):
+        self.logger.debug(f"Parsing response from secondary URL: {response.url}")
+        item = StrippedHtmlItem()
+        item["html"] = self.stripTags(response)
+        item["url"] = response.url.split("/")[2]
+
+        # Log the scraped secondary URL and HTML length
+        self.logger.debug(
+            f"Secondary URL: {item['url']}, HTML Length: {len(item['html'])}"
+        )
+
+        timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+        filename = f"out/SECONDARY-{item['url']}-{timestamp}.html"
+
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
+        with open(filename, "w", encoding="utf-8") as f:
+            f.write(item["html"])
+
+        # Yield the secondary item
         yield item

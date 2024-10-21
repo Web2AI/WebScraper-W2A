@@ -32,13 +32,8 @@ request_errors = {}
 
 # Scrapy signal handler for when the spider closes
 def _spider_closing(spider: PcssSpider, reason):
-    pass
-    # request_id = spider.request_id
-    # app.logger.debug(f"Spider closed: {reason} for request {request_id}")
-    # if request_results.get(request_id):
-    #     save_results_to_file(request_id)
-    # else:
-    #     app.logger.error(f"No results found for request {request_id}, reason: {reason}")
+    request_id = spider.request_id
+    app.logger.debug(f"Spider closed: {reason} for request {request_id}")
 
 
 # Append the data to the output data list.
@@ -56,9 +51,10 @@ def index():
 # Wait for the spider to complete before returning the response
 @app.route("/scrape", methods=["POST"])
 def scrape():
-    url = request.form.get("url")  # Get the URL from query parameter
+    primary_url = request.form.get("primary_url")
+    secondary_url = request.form.get("secondary_url")
 
-    if not url:
+    if not primary_url:
         return jsonify({"error": "URL is required"}), 400
 
     try:
@@ -71,7 +67,7 @@ def scrape():
         request_errors[request_id] = None
 
         # Run the spider and wait for it to finish
-        result = scrape_with_crochet(url, request_id)
+        result = scrape_with_crochet(primary_url, secondary_url, request_id)
 
         # If an error occurred, return it in the response
         if request_errors[request_id]:
@@ -86,7 +82,7 @@ def scrape():
 
 
 @crochet.wait_for(timeout=60.0)  # Wait for the result (adjust timeout as necessary)
-def scrape_with_crochet(url, request_id):
+def scrape_with_crochet(primary_url, secondary_url, request_id):
     global request_results, request_errors
 
     settings = Settings()
@@ -104,7 +100,12 @@ def scrape_with_crochet(url, request_id):
     runner = CrawlerRunner(settings)
 
     # Run the spider and wait for it to complete
-    deferred = runner.crawl(PcssSpider, url=url, request_id=request_id)
+    deferred = runner.crawl(
+        PcssSpider,
+        primary_url=primary_url,
+        secondary_url=secondary_url,
+        request_id=request_id,
+    )
     deferred.addErrback(handle_error, request_id)
 
     return deferred
