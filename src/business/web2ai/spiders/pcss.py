@@ -2,6 +2,9 @@ import scrapy
 from bs4 import BeautifulSoup
 
 from business.web2ai.items import StrippedHtmlItem
+from logger_setup import configure_logger
+
+logger = configure_logger()
 
 
 class PcssSpider(scrapy.Spider):
@@ -12,7 +15,7 @@ class PcssSpider(scrapy.Spider):
     ):  # The category variable will have the input URL.
         self.url = url
         self.request_id = request_id
-        print(self.request_id)
+        logger.info(f"Scraping URL: {url}")
         super().__init__(**kwargs)
 
     custom_settings = {
