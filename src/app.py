@@ -37,7 +37,7 @@ def index():
 # Wait for the spider to complete before returning the response
 @app.route("/scrape", methods=["POST"])
 def scrape():
-    url = request.form.get("url")  # Get the URL from query parameter
+    url = request.json.get("url")  # Get the URL from query parameter
 
     if not url:
         return jsonify({"error": "URL is required"}), 400
