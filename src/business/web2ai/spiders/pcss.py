@@ -5,7 +5,10 @@ import os
 import scrapy
 from bs4 import BeautifulSoup
 
+from business.web2ai.html_filter import HtmlFilter
 from business.web2ai.items import StrippedHtmlItem
+
+logger = logging.getLogger()
 
 
 class PcssSpider(scrapy.Spider):
@@ -15,7 +18,9 @@ class PcssSpider(scrapy.Spider):
         self.primary_url = primary_url
         self.secondary_url = secondary_url
         self.request_id = request_id
-        self.logger.debug(f"Spider initialized with request_id: {self.request_id}")
+        self.primary_data = None
+        self.secondary_data = None
+        logger.debug(f"Spider initialized with request_id: {self.request_id}")
         super().__init__(**kwargs)
 
     custom_settings = {
@@ -42,14 +47,12 @@ class PcssSpider(scrapy.Spider):
 
     def start_requests(self):
         # Request the primary URL
-        self.logger.debug(f"Starting request for primary URL: {self.primary_url}")
+        logger.debug(f"Starting request for primary URL: {self.primary_url}")
         yield scrapy.Request(self.primary_url, callback=self.parse_primary)
 
         # Request the secondary URL
         if self.secondary_url:
-            self.logger.debug(
-                f"Starting request for secondary URL: {self.secondary_url}"
-            )
+            logger.debug(f"Starting request for secondary URL: {self.secondary_url}")
             yield scrapy.Request(self.secondary_url, callback=self.parse_secondary)
 
     def parse(self, response):
@@ -58,8 +61,8 @@ class PcssSpider(scrapy.Spider):
         item["url"] = response.url.split("/")[2]
 
         # Log the scraped URL and HTML length for debugging
-        self.logger.debug(f"Scraped URL: {item["url"]}")
-        self.logger.debug(f"HTML Length: {len(item["html"])}")
+        logger.debug(f"Scraped URL: {item["url"]}")
+        logger.debug(f"HTML Length: {len(item["html"])}")
 
         # Save the HTML to a file
         timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
@@ -72,15 +75,13 @@ class PcssSpider(scrapy.Spider):
         yield item
 
     def parse_primary(self, response):
-        self.logger.debug(f"Parsing response from primary URL: {response.url}")
+        logger.debug(f"Parsing response from primary URL: {response.url}")
         item = StrippedHtmlItem()
         item["html"] = self.stripTags(response)
         item["url"] = response.url.split("/")[2]
 
         # Log the scraped primary URL and HTML length
-        self.logger.debug(
-            f"Primary URL: {item['url']}, HTML Length: {len(item['html'])}"
-        )
+        logger.debug(f"Primary URL: {item['url']}, HTML Length: {len(item['html'])}")
 
         timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
         filename = f"out/PRIMARY-{item['url']}-{timestamp}.html"
@@ -93,15 +94,13 @@ class PcssSpider(scrapy.Spider):
         yield item
 
     def parse_secondary(self, response):
-        self.logger.debug(f"Parsing response from secondary URL: {response.url}")
+        logger.debug(f"Parsing response from secondary URL: {response.url}")
         item = StrippedHtmlItem()
         item["html"] = self.stripTags(response)
         item["url"] = response.url.split("/")[2]
 
         # Log the scraped secondary URL and HTML length
-        self.logger.debug(
-            f"Secondary URL: {item['url']}, HTML Length: {len(item['html'])}"
-        )
+        logger.debug(f"Secondary URL: {item['url']}, HTML Length: {len(item['html'])}")
 
         timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
         filename = f"out/SECONDARY-{item['url']}-{timestamp}.html"

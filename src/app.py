@@ -8,6 +8,7 @@ from scrapy.settings import Settings
 from scrapy.signalmanager import dispatcher
 
 from business.web2ai.spiders.pcss import PcssSpider
+from logger_setup import configure_logger
 
 # Initialize crochet
 crochet.setup()
@@ -15,15 +16,8 @@ crochet.setup()
 # Initialize Flask
 app = Flask(__name__)
 
-# Configure logging for both Scrapy and Flask
-logging.basicConfig(
-    level=logging.DEBUG,  # Set log level to DEBUG
-    format="%(asctime)s [%(levelname)s] %(message)s",
-    handlers=[logging.StreamHandler()],
-)
-
-# Ensure Flask uses the logger at DEBUG level
-app.logger.setLevel(logging.DEBUG)
+# Set up logging
+configure_logger()
 
 # Store results and errors per request
 request_results: dict[int, list] = {}
