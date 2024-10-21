@@ -1,9 +1,13 @@
-from flask import Blueprint, jsonify, render_template, request, current_app as app
+from flask import Blueprint
+from flask import current_app as app
+from flask import jsonify, render_template, request
+
 from business.scraper.scrapy_runner import ScrapyRunner
 
-main = Blueprint('main', __name__)
+main = Blueprint("main", __name__)
 
 scrapy_runner = ScrapyRunner()
+
 
 @main.route("/")
 def index():
