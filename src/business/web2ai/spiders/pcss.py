@@ -7,6 +7,9 @@ from bs4 import BeautifulSoup
 
 from business.web2ai.html_filter import HtmlFilter
 from business.web2ai.items import StrippedHtmlItem
+from logger_setup import configure_logger
+
+logger = configure_logger()
 
 logger = logging.getLogger()
 
