@@ -4,6 +4,7 @@ import os
 
 import scrapy
 from bs4 import BeautifulSoup
+
 from business.scraper.html_filter import HtmlFilter
 from business.scraper.items.stripped_html_item import StrippedHtmlItem
 from logger_setup import configure_logger
