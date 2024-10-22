@@ -1,17 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>temp_app</title>
+    <title>PCSS Scraper</title>
   </head>
-
-  <style>
-    h1 {
-      text-align: center;
-    }
-    form {
-      text-align: center;
-    }
-  </style>
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
@@ -25,10 +16,16 @@
         <form id="input-form" method="post" action="/scrape">
           <input
             type="text"
-            name="url"
+            name="primary_url"
             style="width: 300px"
             required
             placeholder="Provide URL"
+          /><br /><br />
+          <input
+            type="text"
+            name="secondary_url"
+            style="width: 300px"
+            placeholder="Provide secondary URL (WIP)"
           /><br /><br />
           <input
             id="submitbutton"
