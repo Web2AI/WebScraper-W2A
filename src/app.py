@@ -7,10 +7,14 @@ from scrapy.settings import Settings
 from scrapy.signalmanager import dispatcher
 
 from business.web2ai.spiders.pcss import PcssSpider
+from logger_setup import configure_logger
 
 crochet.setup()  # Initialize crochet
 
 app = Flask(__name__)
+
+# Set up logging
+logger = configure_logger()
 
 # Store results and errors per request
 request_results: dict[int, list] = {}
@@ -19,13 +23,14 @@ request_errors = {}
 
 # Scrapy signal handler for when the spider closes
 def _spider_closing(spider: PcssSpider, reason):
-    pass  # cleanup
+    request_id = spider.request_id
+    logger.debug(f"Spider closed: {reason} for request {request_id}")
 
 
 # This will append the data to the output data list.
 def _crawler_result(item, response, spider: PcssSpider):
     request_results[spider.request_id].append(dict(item))
-    app.logger.debug(spider.request_id)
+    logger.debug(f"Item scraped for request {spider.request_id}")
 
 
 # By Deafult Flask will come into this when we run the file
@@ -45,7 +50,7 @@ def scrape():
     try:
         # Use a unique ID (request context ID) to store results for each user request
         request_id = id(request)
-        app.logger.debug(request_id)
+        logger.debug(f"Starting scrape for request {request_id}")
 
         # Initialize the result storage for this request
         request_results[request_id] = []
@@ -62,7 +67,7 @@ def scrape():
         return jsonify({"results": request_results[request_id]}), 200
 
     except Exception as e:
-        app.logger.exception("")
+        logger.exception("")
         return jsonify({"error": str(e)}), 500
 
 
