@@ -14,9 +14,3 @@ __pycache__/
 
 # Processed files
 pcss-*.html
-
-# Results
-out/
-
-# VS Code
-.vscode/
