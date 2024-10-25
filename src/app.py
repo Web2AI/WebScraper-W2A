@@ -45,8 +45,8 @@ def index():
 # Wait for the spider to complete before returning the response
 @app.route("/scrape", methods=["POST"])
 def scrape():
-    primary_url = request.form.get("primary_url")
-    secondary_url = request.form.get("secondary_url")
+    primary_url = request.json.get("primary_url")
+    secondary_url = request.json.get("secondary_url")
 
     if not primary_url:
         return jsonify({"error": "URL is required"}), 400

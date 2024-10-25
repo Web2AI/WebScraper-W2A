@@ -1,6 +1,7 @@
 function scraperApp() {
   return {
-    url: "", // bind URL input
+    primaryUrl: "", // bind primary URL input
+    secondaryUrl: "", // bind secondary URL input (optional)
     loading: false, // loading state
     resultMessage: "", // feedback message to user
     resultClass: "", // CSS class for feedback
@@ -16,7 +17,10 @@ function scraperApp() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ url: this.url }),
+          body: JSON.stringify({
+            primary_url: this.primaryUrl,
+            secondary_url: this.secondaryUrl,
+          }),
         });
 
         const data = await response.json();

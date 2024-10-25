@@ -58,25 +58,6 @@ class PcssSpider(scrapy.Spider):
             logger.debug(f"Starting request for secondary URL: {self.secondary_url}")
             yield scrapy.Request(self.secondary_url, callback=self.parse_secondary)
 
-    # def parse(self, response):
-    #     item = StrippedHtmlItem()
-    #     item["html"] = self.stripTags(response)
-    #     item["url"] = response.url.split("/")[2]
-
-    #     # Log the scraped URL and HTML length for debugging
-    #     logger.debug(f"Scraped URL: {item["url"]}")
-    #     logger.debug(f"HTML Length: {len(item["html"])}")
-
-    #     # Save the HTML to a file
-    #     timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-    #     filename = f"out/TEST-{item['url']}-{timestamp}.html"
-    #     os.makedirs(os.path.dirname(filename), exist_ok=True)
-    #     with open(filename, "w", encoding="utf-8") as f:
-    #         f.write(item["html"])
-
-    #     # Optionally yield the item to trigger the pipeline
-    #     yield item
-
     def parse_primary(self, response):
         logger.debug(f"Parsing response from primary URL: {response.url}")
         item = StrippedHtmlItem()
@@ -85,13 +66,6 @@ class PcssSpider(scrapy.Spider):
 
         # Log the scraped primary URL and HTML length
         logger.debug(f"Primary URL: {item['url']}, HTML Length: {len(item['html'])}")
-
-        # timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-        # filename = f"../out/PRIMARY-{item['url']}-{timestamp}.html"
-
-        # os.makedirs(os.path.dirname(filename), exist_ok=True)
-        # with open(filename, "w", encoding="utf-8") as f:
-        #     f.write(item["html"])
 
         self.primary_data = item["html"]
         self.filter_html()
@@ -106,13 +80,6 @@ class PcssSpider(scrapy.Spider):
 
         # Log the scraped secondary URL and HTML length
         logger.debug(f"Secondary URL: {item['url']}, HTML Length: {len(item['html'])}")
-
-        # timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-        # filename = f"../out/SECONDARY-{item['url']}-{timestamp}.html"
-
-        # os.makedirs(os.path.dirname(filename), exist_ok=True)
-        # with open(filename, "w", encoding="utf-8") as f:
-        #     f.write(item["html"])
 
         self.secondary_data = item["html"]
         self.filter_html()
