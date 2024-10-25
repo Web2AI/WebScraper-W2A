@@ -19,7 +19,7 @@ class ScrapyRunner:
     def _spider_closing(self, spider, reason):
         pass  # cleanup logic if needed
 
-    def _crawler_result(self, item, response, spider):
+    def _crawler_result(self, item, response, spider: PcssSpider):
         self.results[spider.request_id].append(dict(item))
 
     @cached_property
@@ -37,24 +37,26 @@ class ScrapyRunner:
 
     @cached_property
     def _runner(self):
-        # Setting up Scrapy Crawler
-        settings = Settings()
-
         dispatcher.connect(self._crawler_result, signal=signals.item_scraped)
         dispatcher.connect(self._spider_closing, signal=signals.spider_closed)
-        return CrawlerRunner(settings)
+        return CrawlerRunner(self._settings)
 
     def _handle_error(self, failure, request_id):
         self.errors[request_id] = str(failure)
 
     @crochet.wait_for(timeout=60.0)
-    def scrape(self, url, request_id):
+    def scrape(self, primary_url, secondary_url, request_id):
         # Initialize result storage for this request
         self.results[request_id] = []
         self.errors[request_id] = None
 
         # Run the spider and handle errors
-        deferred = self._runner.crawl(PcssSpider, url=url, request_id=request_id)
+        deferred = self._runner.crawl(
+            PcssSpider,
+            primary_url=primary_url,
+            secondary_url=secondary_url,
+            request_id=request_id,
+        )
         deferred.addErrback(self._handle_error, request_id)
 
         return deferred

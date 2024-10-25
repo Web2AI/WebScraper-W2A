@@ -16,15 +16,16 @@ def index():
 
 @main.route("/scrape", methods=["POST"])
 def scrape():
-    url = request.form.get("url")
+    primary_url = request.json.get("primary_url")
+    secondary_url = request.json.get("secondary_url")
 
-    if not url:
+    if not primary_url:
         return jsonify({"error": "URL is required"}), 400
 
     try:
         request_id = id(request)
 
-        scrapy_runner.scrape(url, request_id)
+        scrapy_runner.scrape(primary_url, secondary_url, request_id)
 
         error = scrapy_runner.errors.get(request_id)
         if error:
