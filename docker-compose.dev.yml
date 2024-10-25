@@ -7,3 +7,5 @@ services:
       - .:/w2a-scraper/app
     ports:
       - 5000:5000
+    tty: true
+    
