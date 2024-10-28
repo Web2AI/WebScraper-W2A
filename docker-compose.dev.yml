@@ -1,0 +1,11 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - .:/w2a-scraper/app
+    ports:
+      - 5000:5000
+    tty: true
+    

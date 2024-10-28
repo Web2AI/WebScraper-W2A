@@ -1,0 +1,62 @@
+from functools import cached_property
+
+import crochet
+from scrapy import signals
+from scrapy.crawler import CrawlerRunner
+from scrapy.settings import Settings
+from scrapy.signalmanager import dispatcher
+
+from business.scraper.spiders.pcss import PcssSpider
+
+crochet.setup()  # Initialize crochet
+
+
+class ScrapyRunner:
+    def __init__(self):
+        self.results = {}
+        self.errors = {}
+
+    def _spider_closing(self, spider, reason):
+        pass  # cleanup logic if needed
+
+    def _crawler_result(self, item, response, spider: PcssSpider):
+        self.results[spider.request_id].append(dict(item))
+
+    @cached_property
+    def _settings(self):
+        settings = Settings()
+        settings.set(
+            "ITEM_PIPELINES",
+            {
+                "business.scraper.pipelines.save_to_html_file_pipeline.SaveToHtmlFilePipeline": 300,
+            },
+        )
+        settings.set("LOG_LEVEL", "DEBUG")
+
+        return settings
+
+    @cached_property
+    def _runner(self):
+        dispatcher.connect(self._crawler_result, signal=signals.item_scraped)
+        dispatcher.connect(self._spider_closing, signal=signals.spider_closed)
+        return CrawlerRunner(self._settings)
+
+    def _handle_error(self, failure, request_id):
+        self.errors[request_id] = str(failure)
+
+    @crochet.wait_for(timeout=60.0)
+    def scrape(self, primary_url, secondary_url, request_id):
+        # Initialize result storage for this request
+        self.results[request_id] = []
+        self.errors[request_id] = None
+
+        # Run the spider and handle errors
+        deferred = self._runner.crawl(
+            PcssSpider,
+            primary_url=primary_url,
+            secondary_url=secondary_url,
+            request_id=request_id,
+        )
+        deferred.addErrback(self._handle_error, request_id)
+
+        return deferred

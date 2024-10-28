@@ -6,15 +6,11 @@ USER flask
 WORKDIR /w2a-scraper/app
 
 COPY config/requirements.txt config/requirements.txt
-RUN pip3 install -r config/requirements.txt
-
-COPY . .
+RUN pip3 install --no-cache-dir -r config/requirements.txt
 
 ENV FLASK_APP=app
 ENV FLASK_ENV=development
 
-EXPOSE 5000
-
 WORKDIR /w2a-scraper/app/src
 
-CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0"]
+CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0", "--debug"]
