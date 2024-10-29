@@ -26,9 +26,16 @@ class ScrapyRunner:
     def _settings(self):
         settings = Settings()
         settings.set(
+            "DOWNLOADER_MIDDLEWARES",
+            {
+                "business.scraper.middlewares.check_if_already_scraped.CheckIfAlreadyScrapedDownloaderMiddleware": 543,
+            },
+        )
+        settings.set(
             "ITEM_PIPELINES",
             {
                 "business.scraper.pipelines.save_to_html_file_pipeline.SaveToHtmlFilePipeline": 300,
+                "business.scraper.pipelines.save_to_db_pipeline.SaveToDBPipeline": 350,
             },
         )
         settings.set("LOG_LEVEL", "DEBUG")

@@ -3,6 +3,10 @@ from flask import current_app as app
 from flask import jsonify, render_template, request
 
 from business.scraper.scrapy_runner import ScrapyRunner
+from log_utils import configure_logger
+from models import Site
+
+logger = configure_logger()
 
 main = Blueprint("main", __name__)
 
@@ -12,6 +16,12 @@ scrapy_runner = ScrapyRunner()
 @main.route("/")
 def index():
     return render_template("index.html")
+
+
+@main.route("/history")
+def history():
+    sites = Site.query.all()
+    return render_template("history.html", sites=sites)
 
 
 @main.route("/scrape", methods=["POST"])
@@ -35,5 +45,5 @@ def scrape():
         return jsonify({"results": results}), 200
 
     except Exception as e:
-        app.logger.exception("An exception occurred during scraping")
+        logger.exception("An exception occurred during scraping")
         return jsonify({"error": str(e)}), 500

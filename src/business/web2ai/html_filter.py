@@ -6,10 +6,9 @@ logger = configure_logger()
 
 
 class HtmlFilter:
-    def __init__(self, primary_data, secondary_data, output_dir):
+    def __init__(self, primary_data, secondary_data):
         self.primary_data = primary_data
         self.secondary_data = secondary_data
-        self.output_dir = output_dir
         logger.info("HtmlFilter initialized")
 
     def initial_clean(self, data):
@@ -96,11 +95,5 @@ class HtmlFilter:
         soup2 = self.initial_clean(soup2)
 
         common_structure = self.create_common_structure(soup1, soup2)
-        common_structure_path = f"{self.output_dir}/common_structure.html"
-        with open(common_structure_path, "w", encoding="utf-8") as file:
-            file.write(str(common_structure))
 
-        unique_texts = self.remove_common_parts(soup1, common_structure)
-        unique_text_path = f"{self.output_dir}/unique_texts.html"
-        with open(unique_text_path, "w", encoding="utf-8") as file:
-            file.write(str(unique_texts))
+        return self.remove_common_parts(soup1, common_structure)

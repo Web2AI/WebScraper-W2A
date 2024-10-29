@@ -1,3 +1,4 @@
+import json
 import os
 
 import scrapy
@@ -12,6 +13,7 @@ logger = configure_logger()
 
 class PcssSpider(scrapy.Spider):
     name = "pcss"
+    custom_settings = {"DEPTH_LIMIT": 1}
 
     def __init__(self, primary_url, secondary_url, request_id, **kwargs):
         self.primary_url = primary_url
@@ -47,14 +49,9 @@ class PcssSpider(scrapy.Spider):
     def start_requests(self):
         # Request the primary URL
         logger.debug(f"Starting request for primary URL: {self.primary_url}")
-        yield scrapy.Request(self.primary_url, callback=self.parse_primary)
+        yield scrapy.Request(self.primary_url, callback=self.parse_main)
 
-        # Request the secondary URL
-        if self.secondary_url:
-            logger.debug(f"Starting request for secondary URL: {self.secondary_url}")
-            yield scrapy.Request(self.secondary_url, callback=self.parse_secondary)
-
-    def parse_primary(self, response):
+    def parse_main(self, response):
         logger.debug(f"Parsing response from primary URL: {response.url}")
         item = StrippedHtmlItem()
         item["html"] = self.stripTags(response)
@@ -63,12 +60,21 @@ class PcssSpider(scrapy.Spider):
         # Log the scraped primary URL and HTML length
         logger.debug(f"Primary URL: {item['url']}, HTML Length: {len(item['html'])}")
 
-        self.primary_data = item["html"]
-        self.filter_html()
-        # Yield the primary item
-        yield item
+        for next_page in response.css("a::attr(href)").extract():
+            if (
+                next_page is not None
+                and next_page
+                and next_page.startswith("https://www.pcss.pl/")
+            ):
+                next_page = response.urljoin(next_page)
+                logger.debug(f"Next page: {next_page}")
+                yield scrapy.Request(
+                    next_page,
+                    callback=self.parse_rest,
+                    meta={"primary_html": item["html"]},
+                )
 
-    def parse_secondary(self, response):
+    def parse_rest(self, response):
         logger.debug(f"Parsing response from secondary URL: {response.url}")
         item = StrippedHtmlItem()
         item["html"] = self.stripTags(response)
@@ -77,26 +83,19 @@ class PcssSpider(scrapy.Spider):
         # Log the scraped secondary URL and HTML length
         logger.debug(f"Secondary URL: {item['url']}, HTML Length: {len(item['html'])}")
 
-        self.secondary_data = item["html"]
-        self.filter_html()
+        item["json"] = json.dumps(
+            self.filter_html(response.meta["primary_html"], item["html"])
+        )
         # Yield the secondary item
         yield item
 
-    def filter_html(self):
-        print("Filtering HTML")
+    def filter_html(self, primary_html, secondary_html):
+        logger.debug("Filtering HTML")
 
         # Print debug information about primary and secondary data
         logger.debug(f"Primary data available: {self.primary_data is not None}")
         logger.debug(f"Secondary data available: {self.secondary_data is not None}")
 
-        if self.primary_data is not None and self.secondary_data is not None:
+        html_filter = HtmlFilter(primary_html, secondary_html)
 
-            output_dir = os.path.abspath(
-                os.path.join(os.path.dirname(__file__), "../../../../out")
-            )
-
-            html_filter = HtmlFilter(
-                self.primary_data, self.secondary_data, output_dir=output_dir
-            )
-
-            html_filter.filter_output()
+        return html_filter.filter_output()
