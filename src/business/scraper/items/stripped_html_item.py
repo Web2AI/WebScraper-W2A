@@ -20,4 +20,4 @@ class StrippedHtmlItem(scrapy.Item):
         # db_item = Site(**model_data, date=datetime.datetime.now())
         db_item = Site(url=self["url"], json=self["json"], date=datetime.datetime.now())
         db.session.add(db_item)
-        db.session.commit()  # TODO better duplicate handling
+        db.session.commit()
