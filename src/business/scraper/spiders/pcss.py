@@ -1,3 +1,4 @@
+import datetime
 import json
 from urllib.parse import urlparse
 
@@ -70,7 +71,8 @@ class PcssSpider(scrapy.Spider):
         logger.debug(f"Parsing response from secondary URL: {response.url}")
         item = StrippedHtmlItem()
         soup = BeautifulSoup(response.body, "html.parser")
-        item["html"] = UnneccessaryTagsFilter.filter(soup).html.prettify()
+        filtered_soup = UnneccessaryTagsFilter.filter(soup)
+        item["html"] = filtered_soup.prettify()
         item["url"] = self.remove_protocol(response.url)
         item["parent_url"] = response.meta["parent_url"]
 
@@ -80,6 +82,15 @@ class PcssSpider(scrapy.Spider):
         item["json"] = json.dumps(
             self.filter_html(item["html"], response.meta["parent_html"])
         )
+
+        # Extract attachments
+        # THE ATTACHMENTS SHOULD BE EXTRACTED AFTER FILTERING!!!
+        item["attachments_meta"] = self.extract_attachments(item["url"], filtered_soup)
+        
+        for attachment in item["attachments_meta"]:
+            logger.debug(f"Attachment: {attachment}")
+        logger.debug(f"Attachments count: {len(item["attachments_meta"])}")
+
         # Yield the secondary item
         yield item  # TODO: add yield scrapy request like in parse_main (and adjust depth_limit)
 
@@ -87,3 +98,27 @@ class PcssSpider(scrapy.Spider):
         logger.debug("Filtering HTML")
 
         return CommonTagsFilter().filter(scraped_html, context_html)
+
+
+    def extract_attachments(self, site_url, soup):
+        """Extract images, videos, and other attachments from the page."""
+
+        logger.debug(f"Extracting attachments from {site_url}")
+
+        #TODO - add list of possible attachments
+
+        attachments_meta = []
+
+        # Extract images
+        images = soup.find_all("img")
+        for img in images:
+            src = img.get("src")
+            if src:
+                meta = {
+                    "type": "image",
+                    "content": None,
+                    "url": src,
+                }
+                attachments_meta.append(meta)
+        
+        return attachments_meta
