@@ -7,11 +7,23 @@
 # useful for handling different item types with a single interface
 # from itemadapter import ItemAdapter
 
+from psycopg2 import IntegrityError
+
 from app import app
+from log_utils import configure_logger
+from models import db
+
+logger = configure_logger()
 
 
 class SaveToDBPipeline:
     def process_item(self, item, spider):
         with app.app_context():  # Push app context for database interaction
-            item.save_to_db()
+            try:
+                db_item = item.model
+                db.session.merge(db_item)
+                db.session.commit()
+            except IntegrityError:
+                db.session.rollback()
+                logger.error("Integrity constraint violation")
         return item

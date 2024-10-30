@@ -6,10 +6,9 @@
 import datetime
 
 import scrapy
-from sqlalchemy.exc import IntegrityError
 
 from log_utils import configure_logger
-from models import Site, db
+from models import Site
 
 logger = configure_logger()
 
@@ -19,13 +18,6 @@ class StrippedHtmlItem(scrapy.Item):
     html = scrapy.Field()
     json = scrapy.Field()
 
-    def save_to_db(self):
-        try:
-            db_item = Site(
-                url=self["url"], json=self["json"], date=datetime.datetime.now()
-            )
-            db.session.merge(db_item)
-            db.session.commit()
-        except IntegrityError:
-            db.session.rollback()
-            logger.error("Integrity constraint violation")
+    @property
+    def model(self):
+        return Site(url=self["url"], json=self["json"], date=datetime.datetime.now())
