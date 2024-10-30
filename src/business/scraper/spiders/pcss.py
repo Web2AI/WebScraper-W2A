@@ -16,7 +16,7 @@ class PcssSpider(scrapy.Spider):
     custom_settings = {"CLOSESPIDER_TIMEOUT": 15, "DEPTH_LIMIT": 1}
 
     def __init__(self, primary_url, request_id, **kwargs):
-        self.primary_url = primary_url
+        self._primary_url = primary_url
         self.request_id = request_id
         logger.debug(f"Spider initialized with request_id: {self.request_id}")
         super().__init__(**kwargs)
@@ -34,8 +34,8 @@ class PcssSpider(scrapy.Spider):
                 yield next_page
 
     def start_requests(self):
-        logger.debug(f"Starting request for primary URL: {self.primary_url}")
-        yield scrapy.Request(self.primary_url, callback=self.parse_main)
+        logger.debug(f"Starting request for primary URL: {self._primary_url}")
+        yield scrapy.Request(self._primary_url, callback=self.parse_main)
 
     def parse_main(self, response):
         # TODO: Right now main page doesn't filter out
@@ -58,7 +58,7 @@ class PcssSpider(scrapy.Spider):
             yield scrapy.Request(
                 next_page,
                 callback=self.parse_rest,
-                meta={"primary_html": item["html"]},
+                meta={"parent_html": item["html"], "parent_url": item["url"]},
             )
 
         # TODO: yield primary item (not filtered and no json)
@@ -69,13 +69,13 @@ class PcssSpider(scrapy.Spider):
         soup = BeautifulSoup(response.body, "html.parser")
         item["html"] = UnneccessaryTagsFilter.filter(soup).html.prettify()
         item["url"] = "".join(response.url.split("/")[2:])
-        item["parent_url"] = "".join(self.primary_url.split("/")[2:])
+        item["parent_url"] = "".join(response.meta["parent_url"].split("/")[2:])
 
         # Log the scraped secondary URL and HTML length
         logger.debug(f"Secondary URL: {item['url']}, HTML Length: {len(item['html'])}")
 
         item["json"] = json.dumps(
-            self.filter_html(item["html"], response.meta["primary_html"])
+            self.filter_html(item["html"], response.meta["parent_html"])
         )
         # Yield the secondary item
         yield item  # TODO: add yield scrapy request like in parse_main (and adjust depth_limit)
