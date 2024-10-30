@@ -61,12 +61,15 @@ class PcssSpider(scrapy.Spider):
                 meta={"primary_html": item["html"]},
             )
 
+        # TODO: yield primary item (not filtered and no json)
+
     def parse_rest(self, response):
         logger.debug(f"Parsing response from secondary URL: {response.url}")
         item = StrippedHtmlItem()
         soup = BeautifulSoup(response.body, "html.parser")
         item["html"] = UnneccessaryTagsFilter.filter(soup).html.prettify()
         item["url"] = "".join(response.url.split("/")[2:])
+        item["parent_url"] = "".join(self.primary_url.split("/")[2:])
 
         # Log the scraped secondary URL and HTML length
         logger.debug(f"Secondary URL: {item['url']}, HTML Length: {len(item['html'])}")

@@ -17,7 +17,13 @@ class StrippedHtmlItem(scrapy.Item):
     url = scrapy.Field()
     html = scrapy.Field()
     json = scrapy.Field()
+    parent_url = scrapy.Field()
 
     @property
     def model(self):
-        return Site(url=self["url"], json=self["json"], date=datetime.datetime.now())
+        return Site(
+            url=self["url"],
+            json=self["json"],
+            date=datetime.datetime.now(),
+            parent_url=self["parent_url"],
+        )
