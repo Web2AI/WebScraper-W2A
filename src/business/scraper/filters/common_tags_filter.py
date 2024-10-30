@@ -1,8 +1,7 @@
 from bs4 import BeautifulSoup, Tag
 
-from business.scraper.filters.unneccessary_tags_filter import (
-    UnneccessaryTagsFilter,
-)
+from business.scraper.filters.unneccessary_tags_filter import \
+    UnneccessaryTagsFilter
 from log_utils import configure_logger
 
 logger = configure_logger()

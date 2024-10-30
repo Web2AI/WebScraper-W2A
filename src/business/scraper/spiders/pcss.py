@@ -4,9 +4,8 @@ import scrapy
 from bs4 import BeautifulSoup
 
 from business.scraper.filters.common_tags_filter import CommonTagsFilter
-from business.scraper.filters.unneccessary_tags_filter import (
-    UnneccessaryTagsFilter,
-)
+from business.scraper.filters.unneccessary_tags_filter import \
+    UnneccessaryTagsFilter
 from business.scraper.items.stripped_html_item import StrippedHtmlItem
 from log_utils import configure_logger
 
