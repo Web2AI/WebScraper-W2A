@@ -17,13 +17,6 @@ content %}
       placeholder="Provide URL"
       x-model="primaryUrl"
     />
-    <input
-      type="text"
-      name="secondaryUrl"
-      class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-      placeholder="Provide secondary URL (optional context)"
-      x-model="secondaryUrl"
-    />
     <button
       type="submit"
       id="submitbutton"
@@ -32,6 +25,12 @@ content %}
     >
       Scrape
     </button>
+    <a
+      href="/history"
+      class="block w-full bg-white text-blue-500 font-semibold py-2 rounded-lg hover:bg-gray-100 transition duration-200 text-center"
+    >
+      History
+    </a>
   </form>
 
   <!-- Feedback Area -->

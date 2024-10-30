@@ -1,28 +1,17 @@
-from bs4 import BeautifulSoup, Comment, Tag
+from bs4 import BeautifulSoup, Tag
 
+from business.scraper.filters.unneccessary_tags_filter import UnneccessaryTagsFilter
 from log_utils import configure_logger
 
 logger = configure_logger()
 
 
-class HtmlFilter:
-    def __init__(self, primary_data, secondary_data, output_dir):
-        self.primary_data = primary_data
-        self.secondary_data = secondary_data
-        self.output_dir = output_dir
-        logger.info("HtmlFilter initialized")
+class CommonTagsFilter:
+    def __init__(self):
+        # TODO: maybe we should consider changing functions to staticmethods...
+        pass
 
-    def initial_clean(self, data):
-
-        for tag in data(["script", "style", "head", "link"]):
-            tag.decompose()
-
-        for comment in data(text=lambda text: isinstance(text, Comment)):
-            comment.extract()
-
-        return data
-
-    def get_attributes(self, tag):
+    def _get_attributes(self, tag):
         """Returns a dictionary of attributes for a tag excluding the 'name' attribute."""
         return {
             key: value
@@ -30,7 +19,7 @@ class HtmlFilter:
             if key != "name"
         }
 
-    def create_common_structure(self, tag1, tag2, soup=None):
+    def _create_common_structure(self, tag1, tag2, soup=None):
         """Recursively compares two tags and returns their common structure as a new tag."""
 
         # Initialize a BeautifulSoup object if not provided (for recursion)
@@ -49,7 +38,7 @@ class HtmlFilter:
         attrs1 = getattr(tag1, "attrs", {})
         attrs2 = getattr(tag2, "attrs", {})
         if attrs1 == attrs2:
-            new_tag = soup.new_tag(tag1.name, self.get_attributes(tag1))
+            new_tag = soup.new_tag(tag1.name, self._get_attributes(tag1))
         else:
             new_tag = soup.new_tag(tag1.name)
 
@@ -62,7 +51,7 @@ class HtmlFilter:
         for child1 in tag1.children:
             children2 = list(tag2.children)  # Convert to list to allow indexing
             for child2 in children2[last_match:]:
-                common_child = self.create_common_structure(child1, child2, soup)
+                common_child = self._create_common_structure(child1, child2, soup)
                 if common_child:
                     last_match = children2.index(child2) + 1
                     new_tag.append(common_child)
@@ -70,7 +59,7 @@ class HtmlFilter:
 
         return new_tag
 
-    def remove_common_parts(self, tag, common_structure):
+    def _remove_common_parts(self, tag, common_structure):
         """Removes the common parts of the tag based on the common structure, preserving the order of unique texts."""
 
         # Extract all text nodes from the common structure and clean them
@@ -87,20 +76,14 @@ class HtmlFilter:
 
         return unique_texts
 
-    def filter_output(self):
+    def filter(self, scraped_html, context_html):
 
-        soup1 = BeautifulSoup(self.primary_data, "html.parser")
-        soup2 = BeautifulSoup(self.secondary_data, "html.parser")
+        soup1 = BeautifulSoup(scraped_html, "html.parser")
+        soup2 = BeautifulSoup(context_html, "html.parser")
 
-        soup1 = self.initial_clean(soup1)
-        soup2 = self.initial_clean(soup2)
+        soup1 = UnneccessaryTagsFilter.filter(soup1)
+        soup2 = UnneccessaryTagsFilter.filter(soup2)
 
-        common_structure = self.create_common_structure(soup1, soup2)
-        common_structure_path = f"{self.output_dir}/common_structure.html"
-        with open(common_structure_path, "w", encoding="utf-8") as file:
-            file.write(str(common_structure))
+        common_structure = self._create_common_structure(soup1, soup2)
 
-        unique_texts = self.remove_common_parts(soup1, common_structure)
-        unique_text_path = f"{self.output_dir}/unique_texts.html"
-        with open(unique_text_path, "w", encoding="utf-8") as file:
-            file.write(str(unique_texts))
+        return self._remove_common_parts(soup1, common_structure)

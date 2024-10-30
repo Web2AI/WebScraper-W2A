@@ -17,7 +17,7 @@ class SaveToHtmlFilePipeline:
         timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
         output_dir = os.path.abspath(
             os.path.join(os.path.dirname(__file__), "../../../../out")
-        )
+        )  # TODO: figure out a way to make this path absolute, not relative
         filename = f"{output_dir}/pcss-{adapter.get('url')}-{timestamp}.html"
 
         os.makedirs(os.path.dirname(filename), exist_ok=True)
