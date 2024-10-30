@@ -18,7 +18,9 @@ class SaveToHtmlFilePipeline:
         output_dir = os.path.abspath(
             os.path.join(os.path.dirname(__file__), "../../../../out")
         )  # TODO: figure out a way to make this path absolute, not relative
-        filename = f"{output_dir}/pcss-{adapter.get('url')}-{timestamp}.html"
+        filename = (
+            f"{output_dir}/pcss-{adapter.get('url').replace('/','')}-{timestamp}.html"
+        )
 
         os.makedirs(os.path.dirname(filename), exist_ok=True)
         with open(filename, "w") as f:

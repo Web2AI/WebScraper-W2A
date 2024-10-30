@@ -1,4 +1,5 @@
 import json
+from urllib.parse import urlparse
 
 import scrapy
 from bs4 import BeautifulSoup
@@ -33,6 +34,10 @@ class PcssSpider(scrapy.Spider):
                 next_page = response.urljoin(next_page)
                 yield next_page
 
+    def remove_protocol(self, url):
+        parsed_url = urlparse(url)
+        return parsed_url.netloc + parsed_url.path
+
     def start_requests(self):
         logger.debug(f"Starting request for primary URL: {self._primary_url}")
         yield scrapy.Request(self._primary_url, callback=self.parse_main)
@@ -46,9 +51,7 @@ class PcssSpider(scrapy.Spider):
         item["html"] = UnneccessaryTagsFilter.filter(
             soup
         ).html.prettify()  # TODO: maybe we should move this to a seperate function too...
-        item["url"] = "".join(
-            response.url.split("/")[2:]
-        )  # TODO: move this function into a seperate module
+        item["url"] = self.remove_protocol(response.url)
 
         # Log the scraped primary URL and HTML length
         logger.debug(f"Primary URL: {item['url']}, HTML Length: {len(item['html'])}")
@@ -68,8 +71,8 @@ class PcssSpider(scrapy.Spider):
         item = StrippedHtmlItem()
         soup = BeautifulSoup(response.body, "html.parser")
         item["html"] = UnneccessaryTagsFilter.filter(soup).html.prettify()
-        item["url"] = "".join(response.url.split("/")[2:])
-        item["parent_url"] = "".join(response.meta["parent_url"].split("/")[2:])
+        item["url"] = self.remove_protocol(response.url)
+        item["parent_url"] = response.meta["parent_url"]
 
         # Log the scraped secondary URL and HTML length
         logger.debug(f"Secondary URL: {item['url']}, HTML Length: {len(item['html'])}")
