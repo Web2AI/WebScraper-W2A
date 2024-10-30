@@ -1,7 +1,6 @@
 function scraperApp() {
   return {
     primaryUrl: "", // bind primary URL input
-    secondaryUrl: "", // bind secondary URL input (optional)
     loading: false, // loading state
     resultMessage: "", // feedback message to user
     resultClass: "", // CSS class for feedback
@@ -19,7 +18,6 @@ function scraperApp() {
           },
           body: JSON.stringify({
             primary_url: this.primaryUrl,
-            secondary_url: this.secondaryUrl,
           }),
         });
 

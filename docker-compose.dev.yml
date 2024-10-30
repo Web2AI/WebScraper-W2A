@@ -14,11 +14,6 @@ services:
   db:
     env_file: .env.dev
     image: postgres:latest
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - /path/to/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - 5432:5432
-
-volumes:
-  postgres_data:
+    # we can add volume if we want to preserve the data

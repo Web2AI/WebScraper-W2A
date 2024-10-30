@@ -26,12 +26,6 @@ class ScrapyRunner:
     def _settings(self):
         settings = Settings()
         settings.set(
-            "DOWNLOADER_MIDDLEWARES",
-            {
-                "business.scraper.middlewares.check_if_already_scraped.CheckIfAlreadyScrapedDownloaderMiddleware": 543,
-            },
-        )
-        settings.set(
             "ITEM_PIPELINES",
             {
                 "business.scraper.pipelines.save_to_html_file_pipeline.SaveToHtmlFilePipeline": 300,
@@ -52,7 +46,7 @@ class ScrapyRunner:
         self.errors[request_id] = str(failure)
 
     @crochet.wait_for(timeout=60.0)
-    def scrape(self, primary_url, secondary_url, request_id):
+    def scrape(self, primary_url, request_id):
         # Initialize result storage for this request
         self.results[request_id] = []
         self.errors[request_id] = None
@@ -61,7 +55,6 @@ class ScrapyRunner:
         deferred = self._runner.crawl(
             PcssSpider,
             primary_url=primary_url,
-            secondary_url=secondary_url,
             request_id=request_id,
         )
         deferred.addErrback(self._handle_error, request_id)

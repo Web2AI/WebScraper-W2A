@@ -27,7 +27,6 @@ def history():
 @main.route("/scrape", methods=["POST"])
 def scrape():
     primary_url = request.json.get("primary_url")
-    secondary_url = request.json.get("secondary_url")
 
     if not primary_url:
         return jsonify({"error": "URL is required"}), 400
@@ -35,7 +34,7 @@ def scrape():
     try:
         request_id = id(request)
 
-        scrapy_runner.scrape(primary_url, secondary_url, request_id)
+        scrapy_runner.scrape(primary_url, request_id)
 
         error = scrapy_runner.errors.get(request_id)
         if error:

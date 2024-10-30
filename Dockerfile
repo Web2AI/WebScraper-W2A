@@ -5,8 +5,8 @@ USER flask
 
 WORKDIR /w2a-scraper/app
 
-COPY config/requirements.txt config/requirements.txt
-RUN pip3 install -r config/requirements.txt
+COPY requirements.txt requirements.txt
+RUN pip3 install -r requirements.txt
 
 COPY . .
 
