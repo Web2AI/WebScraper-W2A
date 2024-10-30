@@ -27,7 +27,7 @@ jobs:
         run: mypy .
 
       - name: Run isort
-        run: isort --check-only .
+        run: isort --check-only --profile black .
 
       - name: Run Bandit
         run: bandit -r .
