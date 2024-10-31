@@ -15,6 +15,7 @@ logger = configure_logger()
 class PcssSpider(scrapy.Spider):
     name = "pcss"
     custom_settings = {"CLOSESPIDER_TIMEOUT": 15, "DEPTH_LIMIT": 1}
+    common_tags_filter = None
 
     def __init__(self, primary_url, request_id, **kwargs):
         self._primary_url = primary_url
@@ -48,10 +49,10 @@ class PcssSpider(scrapy.Spider):
         logger.debug(f"Parsing response from primary URL: {response.url}")
         item = StrippedHtmlItem()
         soup = BeautifulSoup(response.body, "html.parser")
-        item["html"] = UnneccessaryTagsFilter.filter(
-            soup
-        ).html.prettify()  # TODO: maybe we should move this to a seperate function too...
+        # TODO: maybe we should move this to a seperate function too...
+        item["html"] = UnneccessaryTagsFilter.filter(soup).html.prettify()
         item["url"] = self.remove_protocol(response.url)
+        self.common_tags_filter = CommonTagsFilter(item["html"])
 
         # Log the scraped primary URL and HTML length
         logger.debug(f"Primary URL: {item['url']}, HTML Length: {len(item['html'])}")
@@ -77,13 +78,5 @@ class PcssSpider(scrapy.Spider):
         # Log the scraped secondary URL and HTML length
         logger.debug(f"Secondary URL: {item['url']}, HTML Length: {len(item['html'])}")
 
-        item["json"] = json.dumps(
-            self.filter_html(item["html"], response.meta["parent_html"])
-        )
-        # Yield the secondary item
+        item["json"] = json.dumps(self.common_tags_filter.filter(item["html"]))
         yield item  # TODO: add yield scrapy request like in parse_main (and adjust depth_limit)
-
-    def filter_html(self, scraped_html, context_html):
-        logger.debug("Filtering HTML")
-
-        return CommonTagsFilter().filter(scraped_html, context_html)
