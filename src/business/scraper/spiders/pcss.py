@@ -81,7 +81,6 @@ class PcssSpider(scrapy.Spider):
         # Log the scraped secondary URL and HTML length
         logger.debug(f"Secondary URL: {item['url']}, HTML Length: {len(item['html'])}")
 
-
         item["json"] = json.dumps(self.common_tags_filter.filter(item["html"]))
         yield item  # TODO: add yield scrapy request like in parse_main (and adjust depth_limit)
 
