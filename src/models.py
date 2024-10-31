@@ -8,6 +8,7 @@ class Site(db.Model):  # type: ignore
     parent_url = db.Column(db.String(255), nullable=True)
     json = db.Column(db.JSON)
     date = db.Column(db.DateTime)
+    page_hash = db.Column(db.String(64), unique=True)
 
     def __repr__(self):
         return f"<Site {self.url}>"

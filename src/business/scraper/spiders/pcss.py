@@ -1,4 +1,5 @@
 import datetime
+import hashlib
 import json
 from urllib.parse import urlparse
 
@@ -59,16 +60,19 @@ class PcssSpider(scrapy.Spider):
         # Log the scraped primary URL and HTML length
         logger.debug(f"Primary URL: {item['url']}, HTML Length: {len(item['html'])}")
 
-        for next_page in self.get_next_pages(response):
-            logger.debug(f"Next page: {next_page}")
-            yield scrapy.Request(
-                next_page,
-                callback=self.parse_rest,
-                meta={"parent_html": item["html"], "parent_url": item["url"]},
-            )
-
+        # for next_page in self.get_next_pages(response):
+        #     logger.debug(f"Next page: {next_page}")
+        #     yield scrapy.Request(
+        #         next_page,
+        #         callback=self.parse_rest,
+        #         meta={"parent_html": item["html"], "parent_url": item["url"]},
+        #     )
+        #     break
+        filtered_content = self.common_tags_filter.filter(item["html"])
         item["parent_url"] = item["url"]
-        item["json"] = json.dumps(self.common_tags_filter.get_context())
+        item["json"] = json.dumps(filtered_content)
+        item["page_hash"] = self.generate_sha256_hash(item["json"])
+        logger.info(f"Page hash: {item['page_hash']}")
         yield item
 
     def parse_rest(self, response):
@@ -82,18 +86,20 @@ class PcssSpider(scrapy.Spider):
 
         # Log the scraped secondary URL and HTML length
         logger.debug(f"Secondary URL: {item['url']}, HTML Length: {len(item['html'])}")
-
-        item["json"] = json.dumps(self.common_tags_filter.filter(item["html"]))
+        filtered_content = self.common_tags_filter.filter(item["html"])
+        item["json"] = json.dumps(filtered_content)
+        item["page_hash"] = self.generate_sha256_hash(item["json"])
+        logger.info(f"Page hash: {item['page_hash']}")
         yield item  # TODO: add yield scrapy request like in parse_main (and adjust depth_limit)
 
         # Extract and yield attachments
         # THE ATTACHMENTS SHOULD BE EXTRACTED AFTER FILTERING!!!
         yield from self.extract_attachments(item["url"], filtered_soup)
 
-    def filter_html(self, scraped_html, context_html):
-        logger.debug("Filtering HTML")
-
-        return CommonTagsFilter().filter(scraped_html, context_html)
+    def generate_sha256_hash(self, content):
+        sha256 = hashlib.sha256()
+        sha256.update(content.encode())
+        return sha256.hexdigest()
 
     def extract_attachments(self, site_url, soup):
         """Extract images, videos, and other attachments from the page."""
