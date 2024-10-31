@@ -65,7 +65,9 @@ class PcssSpider(scrapy.Spider):
                 meta={"parent_html": item["html"], "parent_url": item["url"]},
             )
 
-        # TODO: yield primary item (not filtered and no json)
+        item["parent_url"] = item["url"]
+        item["json"] = json.dumps(self.common_tags_filter.get_context())
+        yield item
 
     def parse_rest(self, response):
         logger.debug(f"Parsing response from secondary URL: {response.url}")

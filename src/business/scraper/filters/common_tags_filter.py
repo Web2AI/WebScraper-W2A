@@ -12,6 +12,9 @@ class CommonTagsFilter:
         context_texts = [text.strip() for text in context_texts if text.strip() != ""]
         self.context = set(context_texts)
 
+    def get_context(self):
+        return list(self.context)
+
     def filter(self, scraped_html):
         """Removes the common parts of the tag based on the context, preserving the order of unique texts."""
         soup1 = BeautifulSoup(scraped_html, "html.parser")
