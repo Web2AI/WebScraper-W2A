@@ -3,9 +3,12 @@ import os
 from flask import Flask
 
 from models import db
+from log_utils import configure_logger
 
 
 def create_app():
+    configure_logger()
+
     app = Flask(__name__)
 
     # Configure the database

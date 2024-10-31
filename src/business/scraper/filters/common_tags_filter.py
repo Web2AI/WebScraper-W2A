@@ -1,8 +1,8 @@
-from bs4 import BeautifulSoup, Tag
+import logging
+from bs4 import BeautifulSoup
 
-from log_utils import configure_logger
 
-logger = configure_logger()
+logger = logging.getLogger(__name__)
 
 
 class CommonTagsFilter:
