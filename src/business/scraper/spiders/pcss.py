@@ -60,19 +60,17 @@ class PcssSpider(scrapy.Spider):
         # Log the scraped primary URL and HTML length
         logger.debug(f"Primary URL: {item['url']}, HTML Length: {len(item['html'])}")
 
-        # for next_page in self.get_next_pages(response):
-        #     logger.debug(f"Next page: {next_page}")
-        #     yield scrapy.Request(
-        #         next_page,
-        #         callback=self.parse_rest,
-        #         meta={"parent_html": item["html"], "parent_url": item["url"]},
-        #     )
-        #     break
+        for next_page in self.get_next_pages(response):
+            logger.debug(f"Next page: {next_page}")
+            yield scrapy.Request(
+                next_page,
+                callback=self.parse_rest,
+                meta={"parent_html": item["html"], "parent_url": item["url"]},
+            )
         filtered_content = self.common_tags_filter.filter(item["html"])
         item["parent_url"] = item["url"]
         item["json"] = json.dumps(filtered_content)
         item["page_hash"] = self.generate_sha256_hash(item["json"])
-        logger.info(f"Page hash: {item['page_hash']}")
         yield item
 
     def parse_rest(self, response):
