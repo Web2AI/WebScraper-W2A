@@ -26,8 +26,8 @@ function scraperApp() {
         console.log(data); // TODO: remove from final
 
         if (data.results) {
-          this.resultMessage =
-            "Success: " + data.results.length + " website(s) scraped";
+          const websites = data.results.filter((result) => result.json);    // TODO: find more robust way for counting scraped websites
+          this.resultMessage = "Success: " + websites.length + " website(s) scraped";
           this.resultClass = "text-green-500";
         } else if (data.error) {
           this.resultMessage = "Error: " + data.error;

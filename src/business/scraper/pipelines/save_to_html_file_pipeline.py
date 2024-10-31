@@ -10,20 +10,23 @@ import os
 
 from itemadapter import ItemAdapter
 
+from src.business.scraper.items.stripped_html_item import StrippedHtmlItem
+
 
 class SaveToHtmlFilePipeline:
     def process_item(self, item, spider):
         adapter = ItemAdapter(item)
-        timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-        output_dir = os.path.abspath(
-            os.path.join(os.path.dirname(__file__), "../../../../out")
-        )  # TODO: figure out a way to make this path absolute, not relative
-        filename = (
-            f"{output_dir}/pcss-{adapter.get('url').replace('/','')}-{timestamp}.html"
-        )
 
-        os.makedirs(os.path.dirname(filename), exist_ok=True)
-        with open(filename, "w") as f:
-            f.write(adapter.get("html"))
+        if isinstance(item, StrippedHtmlItem):
+
+            timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+            output_dir = os.path.abspath(
+                os.path.join(os.path.dirname(__file__), "../../../../out")
+            )  # TODO: figure out a way to make this path absolute, not relative
+            filename = f"{output_dir}/pcss-{adapter.get('url').replace('/','')}-{timestamp}.html"
+
+            os.makedirs(os.path.dirname(filename), exist_ok=True)
+            with open(filename, "w") as f:
+                f.write(adapter.get("html"))
 
         return item

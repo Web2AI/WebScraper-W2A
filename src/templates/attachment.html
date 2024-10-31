@@ -1,0 +1,61 @@
+{% extends "base.html" %} {% block title %}Attachments for {{ url }}{% endblock
+%} {% block content %}
+<div class="bg-white shadow-lg rounded-lg p-8 w-max-content">
+  <a
+    href="{{ url_for('main.history') }}"
+    class="block w-full bg-white text-blue-500 font-semibold py-2 rounded-lg hover:bg-gray-100 transition duration-200 text-center"
+  >
+    Back to History
+  </a>
+  <a
+    href="{{ 'https://' + url }}"
+    target="_blank"
+    class="block w-full bg-white text-blue-500 font-semibold py-2 rounded-lg hover:bg-gray-100 transition duration-200 text-center"
+  >
+    Go to website
+  </a>
+  <h1 class="text-3xl font-bold text-center mb-4">Attachments for {{ url }}</h1>
+  <table class="min-w-full bg-white">
+    <thead>
+      <tr>
+        <th
+          class="py-2 px-4 border-b-2 border-gray-300 text-left leading-tight"
+        >
+          Attachment Type
+        </th>
+        <th
+          class="py-2 px-4 border-b-2 border-gray-300 text-left leading-tight"
+        >
+          Attachment URL
+        </th>
+        <th
+          class="py-2 px-4 border-b-2 border-gray-300 text-left leading-tight"
+        >
+          Date Added
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for attachment in attachments %}
+      <tr>
+        <td class="py-2 px-4 border-b border-gray-300">
+          {{ attachment.type }}
+        </td>
+        <td class="py-2 px-4 border-b border-gray-300">
+          <a
+            href="{{ attachment.url }}"
+            target="_blank"
+            class="text-blue-500 underline"
+          >
+            View Attachment
+          </a>
+        </td>
+        <td class="py-2 px-4 border-b border-gray-300">
+          {{ attachment.date_added }}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -7,10 +7,7 @@ import datetime
 
 import scrapy
 
-from log_utils import configure_logger
 from models import Site
-
-logger = configure_logger()
 
 
 class StrippedHtmlItem(scrapy.Item):
@@ -18,6 +15,7 @@ class StrippedHtmlItem(scrapy.Item):
     parent_url = scrapy.Field()
     html = scrapy.Field()
     json = scrapy.Field()
+    attachments_meta = scrapy.Field()
 
     @property
     def model(self):

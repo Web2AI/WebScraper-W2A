@@ -1,10 +1,12 @@
+from urllib.parse import unquote
+
 from flask import Blueprint
 from flask import current_app as app
 from flask import jsonify, render_template, request
 
 from business.scraper.scrapy_runner import ScrapyRunner
 from log_utils import configure_logger
-from models import Site
+from models import Attachment, Site
 
 logger = configure_logger()
 
@@ -46,3 +48,20 @@ def scrape():
     except Exception as e:
         logger.exception("An exception occurred during scraping")
         return jsonify({"error": str(e)}), 500
+
+
+@main.route("/attachment")
+def attachment():
+
+    # Get the url
+    url = request.args.get("url")
+    if not url:
+        return "URL parameter is missing.", 400
+
+    # Decode the URL if necessary
+    decoded_url = unquote(url)
+
+    # Get attachments for the given URL from the database
+    attachments = Attachment.query.filter_by(site_url=decoded_url).all()
+
+    return render_template("attachment.html", url=decoded_url, attachments=attachments)
