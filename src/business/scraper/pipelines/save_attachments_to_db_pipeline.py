@@ -2,7 +2,7 @@ from psycopg2 import IntegrityError
 
 from app import app
 from log_utils import configure_logger
-from models import db, Attachment
+from models import Attachment, db
 
 logger = configure_logger()
 

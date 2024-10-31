@@ -1,4 +1,5 @@
 from urllib.parse import unquote
+
 from flask import Blueprint
 from flask import current_app as app
 from flask import jsonify, render_template, request
