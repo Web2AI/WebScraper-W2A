@@ -26,6 +26,11 @@ content %}
         >
           Date
         </th>
+        <th
+          class="py-2 px-4 border-b-2 border-gray-300 text-left leading-tight"
+        >
+          Actions
+        </th>
       </tr>
     </thead>
     <tbody>
@@ -36,6 +41,22 @@ content %}
           {{ site.parent_url }}
         </td>
         <td class="py-2 px-4 border-b border-gray-300">{{ site.date }}</td>
+        <td class="py-2 px-4 border-b border-gray-300">
+          <a
+            href="{{ url_for('main.attachment') }}?url={{ site.url | urlencode }}"
+            class="bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200"
+            style="margin-right: 10px"
+          >
+            Attachments
+          </a>
+          <a
+            href="{{ 'https://' + site.url }}"
+            target="_blank"
+            class="bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200"
+          >
+            Go to website
+          </a>
+        </td>
       </tr>
       {% endfor %}
     </tbody>

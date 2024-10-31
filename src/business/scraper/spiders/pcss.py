@@ -86,7 +86,7 @@ class PcssSpider(scrapy.Spider):
         # Extract attachments
         # THE ATTACHMENTS SHOULD BE EXTRACTED AFTER FILTERING!!!
         item["attachments_meta"] = self.extract_attachments(item["url"], filtered_soup)
-        
+
         for attachment in item["attachments_meta"]:
             logger.debug(f"Attachment: {attachment}")
         logger.debug(f"Attachments count: {len(item["attachments_meta"])}")
@@ -99,13 +99,12 @@ class PcssSpider(scrapy.Spider):
 
         return CommonTagsFilter().filter(scraped_html, context_html)
 
-
     def extract_attachments(self, site_url, soup):
         """Extract images, videos, and other attachments from the page."""
 
         logger.debug(f"Extracting attachments from {site_url}")
 
-        #TODO - add list of possible attachments
+        # TODO - add list of possible attachments
 
         attachments_meta = []
 
@@ -120,5 +119,5 @@ class PcssSpider(scrapy.Spider):
                     "url": src,
                 }
                 attachments_meta.append(meta)
-        
+
         return attachments_meta

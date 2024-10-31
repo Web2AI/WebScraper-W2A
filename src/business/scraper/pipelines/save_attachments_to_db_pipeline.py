@@ -14,7 +14,11 @@ class SaveAttachmentsToDBPipeline:
                 for attachment in item["attachments_meta"]:
 
                     # Check if the attachment already exists in the database
-                    existing_item = db.session.query(Attachment).filter_by(attachment_url=attachment["url"]).first()
+                    existing_item = (
+                        db.session.query(Attachment)
+                        .filter_by(attachment_url=attachment["url"])
+                        .first()
+                    )
 
                     if not existing_item:
                         db_attachment = item.attachment_model(attachment)

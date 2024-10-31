@@ -28,7 +28,7 @@ class StrippedHtmlItem(scrapy.Item):
             json=self["json"],
             date=datetime.datetime.now(),
         )
-    
+
     def attachment_model(self, attachment):
         return Attachment(
             id=None,  # Auto-generated primary key

@@ -20,7 +20,7 @@ class Attachment(db.Model):  # type: ignore
     # At this stage an artificial key is used.
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    url = db.Column(db.String(255))      # TODO: add foreign key
+    url = db.Column(db.String(255), db.ForeignKey("site.url"))
     attachment_type = db.Column(db.String(255))
     attachment_content = db.Column(db.LargeBinary)
     attachment_url = db.Column(db.String(255))
