@@ -2,8 +2,8 @@ import os
 
 from flask import Flask
 
-from models import db
 from log_utils import configure_logger
+from models import db
 
 
 def create_app():

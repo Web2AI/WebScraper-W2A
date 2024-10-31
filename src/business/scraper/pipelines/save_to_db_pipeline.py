@@ -8,6 +8,7 @@
 # from itemadapter import ItemAdapter
 
 import logging
+
 from psycopg2 import IntegrityError
 
 from app import app
