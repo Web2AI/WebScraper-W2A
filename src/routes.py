@@ -62,6 +62,6 @@ def attachment():
     decoded_url = unquote(url)
 
     # Get attachments for the given URL from the database
-    attachments = Attachment.query.filter_by(url=decoded_url).all()
+    attachments = Attachment.query.filter_by(site_url=decoded_url).all()
 
     return render_template("attachment.html", url=decoded_url, attachments=attachments)

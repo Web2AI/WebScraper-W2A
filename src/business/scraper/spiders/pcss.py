@@ -8,6 +8,7 @@ from bs4 import BeautifulSoup
 from business.scraper.filters.common_tags_filter import CommonTagsFilter
 from business.scraper.filters.unneccessary_tags_filter import UnneccessaryTagsFilter
 from business.scraper.items.stripped_html_item import StrippedHtmlItem
+from business.scraper.items.attachment_item import AttachmentItem
 from log_utils import configure_logger
 
 logger = configure_logger()
@@ -83,16 +84,12 @@ class PcssSpider(scrapy.Spider):
             self.filter_html(item["html"], response.meta["parent_html"])
         )
 
-        # Extract attachments
-        # THE ATTACHMENTS SHOULD BE EXTRACTED AFTER FILTERING!!!
-        item["attachments_meta"] = self.extract_attachments(item["url"], filtered_soup)
-
-        for attachment in item["attachments_meta"]:
-            logger.debug(f"Attachment: {attachment}")
-        logger.debug(f"Attachments count: {len(item["attachments_meta"])}")
-
         # Yield the secondary item
         yield item  # TODO: add yield scrapy request like in parse_main (and adjust depth_limit)
+
+        # Extract and yield attachments
+        # THE ATTACHMENTS SHOULD BE EXTRACTED AFTER FILTERING!!!
+        yield from self.extract_attachments(item["url"], filtered_soup)
 
     def filter_html(self, scraped_html, context_html):
         logger.debug("Filtering HTML")
@@ -104,20 +101,16 @@ class PcssSpider(scrapy.Spider):
 
         logger.debug(f"Extracting attachments from {site_url}")
 
-        # TODO - add list of possible attachments
-
-        attachments_meta = []
-
         # Extract images
         images = soup.find_all("img")
         for img in images:
             src = img.get("src")
             if src:
-                meta = {
-                    "type": "image",
-                    "content": None,
-                    "url": src,
-                }
-                attachments_meta.append(meta)
+                attachment = AttachmentItem()
+                attachment["site_url"] = site_url
+                attachment["type"] = "image"
+                attachment["content"] = None
+                attachment["url"] = src
 
-        return attachments_meta
+                logger.debug("Yielding image attachment")
+                yield attachment

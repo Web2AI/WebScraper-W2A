@@ -30,7 +30,6 @@ class ScrapyRunner:
             {
                 "business.scraper.pipelines.save_to_html_file_pipeline.SaveToHtmlFilePipeline": 300,
                 "business.scraper.pipelines.save_to_db_pipeline.SaveToDBPipeline": 350,
-                "business.scraper.pipelines.save_attachments_to_db_pipeline.SaveAttachmentsToDBPipeline": 400,
             },
         )
         settings.set("LOG_LEVEL", "DEBUG")

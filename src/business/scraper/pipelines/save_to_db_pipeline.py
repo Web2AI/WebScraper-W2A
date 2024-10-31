@@ -20,10 +20,16 @@ class SaveToDBPipeline:
     def process_item(self, item, spider):
         with app.app_context():  # Push app context for database interaction
             try:
+
+                if item is None:
+                    logger.error("Received None item, skipping...")
+                    return
+
                 db_item = item.model
                 db.session.merge(db_item)
                 db.session.commit()
             except IntegrityError:
                 db.session.rollback()
                 logger.error("Integrity constraint violation")
+
         return item
