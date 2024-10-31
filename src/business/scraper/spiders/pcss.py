@@ -10,7 +10,7 @@ from business.scraper.filters.unneccessary_tags_filter import UnneccessaryTagsFi
 from business.scraper.items.attachment_item import AttachmentItem
 from business.scraper.items.stripped_html_item import StrippedHtmlItem
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger()
 
 
 class PcssSpider(scrapy.Spider):
@@ -65,6 +65,7 @@ class PcssSpider(scrapy.Spider):
                 callback=self.parse_rest,
                 meta={"parent_html": item["html"], "parent_url": item["url"]},
             )
+            break
 
         item["parent_url"] = item["url"]
         item["json"] = json.dumps(self.common_tags_filter.get_context())

@@ -2,7 +2,7 @@ import logging
 
 from bs4 import BeautifulSoup
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger()
 
 
 class CommonTagsFilter:

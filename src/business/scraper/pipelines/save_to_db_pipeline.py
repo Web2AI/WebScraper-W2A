@@ -14,7 +14,7 @@ from psycopg2 import IntegrityError
 from app import app
 from models import db
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger()
 
 
 class SaveToDBPipeline:

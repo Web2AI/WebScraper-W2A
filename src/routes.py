@@ -6,7 +6,7 @@ from flask import Blueprint, jsonify, render_template, request
 from business.scraper.scrapy_runner import ScrapyRunner
 from models import Attachment, Site
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger()
 
 main = Blueprint("main", __name__)
 
