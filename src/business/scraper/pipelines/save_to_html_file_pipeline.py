@@ -11,7 +11,7 @@ import os
 
 from itemadapter import ItemAdapter
 
-from src.business.scraper.items.stripped_html_item import StrippedHtmlItem
+from business.scraper.items.stripped_html_item import StrippedHtmlItem
 
 logger = logging.getLogger()
 
