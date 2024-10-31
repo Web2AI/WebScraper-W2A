@@ -7,8 +7,8 @@ from bs4 import BeautifulSoup
 
 from business.scraper.filters.common_tags_filter import CommonTagsFilter
 from business.scraper.filters.unneccessary_tags_filter import UnneccessaryTagsFilter
-from business.scraper.items.stripped_html_item import StrippedHtmlItem
 from business.scraper.items.attachment_item import AttachmentItem
+from business.scraper.items.stripped_html_item import StrippedHtmlItem
 from log_utils import configure_logger
 
 logger = configure_logger()
