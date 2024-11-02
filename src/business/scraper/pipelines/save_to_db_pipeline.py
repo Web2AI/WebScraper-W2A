@@ -7,13 +7,14 @@
 # useful for handling different item types with a single interface
 # from itemadapter import ItemAdapter
 
+import logging
+
 from psycopg2 import IntegrityError
 
 from app import app
-from log_utils import configure_logger
 from models import db
 
-logger = configure_logger()
+logger = logging.getLogger()
 
 
 class SaveToDBPipeline:

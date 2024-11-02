@@ -6,11 +6,14 @@
 
 # useful for handling different item types with a single interface
 import datetime
+import logging
 import os
 
 from itemadapter import ItemAdapter
 
-from src.business.scraper.items.stripped_html_item import StrippedHtmlItem
+from business.scraper.items.stripped_html_item import StrippedHtmlItem
+
+logger = logging.getLogger()
 
 
 class SaveToHtmlFilePipeline:
@@ -18,6 +21,8 @@ class SaveToHtmlFilePipeline:
         adapter = ItemAdapter(item)
 
         if isinstance(item, StrippedHtmlItem):
+
+            logger.debug(f"Saving {item["url"]} to file")
 
             timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
             output_dir = os.path.abspath(
