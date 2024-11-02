@@ -25,6 +25,8 @@ def create_app():
 
     # Create the database tables within the application context
     with app.app_context():
+        if app.debug:
+            db.drop_all()
         db.create_all()
 
     return app
