@@ -1,12 +1,14 @@
 {% extends "base.html" %} {% block title %}Basic Scraper{% endblock %} {% block
 content %}
-<div class="bg-white shadow-lg rounded-lg p-8 w-max-content">
-  <a
-    href="/"
-    class="block w-full bg-white text-blue-500 font-semibold py-2 rounded-lg hover:bg-gray-100 transition duration-200 text-center"
-  >
-    Back
-  </a>
+<div class="bg-white shadow-lg rounded-lg p-8 w-max-content max-w-600">
+  <div class="flex justify-end">
+    <a
+      href="/"
+      class="block px-6 bg-blue-500 text-white font-semibold py-2 rounded-lg hover:bg-blue-600 transition duration-200 text-center"
+    >
+      Back
+    </a>
+  </div>
   <h1 class="text-3xl font-bold text-center mb-4">Website history</h1>
   <table class="min-w-full bg-white">
     <thead>
@@ -36,25 +38,26 @@ content %}
     <tbody>
       {% for site in sites %}
       <tr>
-        <td class="py-2 px-4 border-b border-gray-300">{{ site.url }}</td>
         <td class="py-2 px-4 border-b border-gray-300">
-          {{ site.parent_url }}
-        </td>
-        <td class="py-2 px-4 border-b border-gray-300">{{ site.date }}</td>
-        <td class="py-2 px-4 border-b border-gray-300">
-          <a
-            href="{{ url_for('main.attachment') }}?url={{ site.url | urlencode }}"
-            class="bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200"
-            style="margin-right: 10px"
-          >
-            Attachments
-          </a>
           <a
             href="{{ 'https://' + site.url }}"
             target="_blank"
-            class="bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200"
+            class="text-blue-500 underline"
           >
-            Go to website
+            {{ site.url }}
+          </a>
+        </td>
+        <td class="py-2 px-4 border-b border-gray-300">
+          {{ site.parent_url }}
+        </td>
+        <td class="py-2 px-4 border-b border-gray-300">{{ site.date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+        <td class="py-2 px-4 border-b border-gray-300">
+          <a
+            href="{{ url_for('main.attachment') }}?url={{ site.url | urlencode }}"
+            class="bg-white text-blue-500 border border-gray-300 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition duration-200"
+            style="margin-right: 10px"
+          >
+          Details
           </a>
         </td>
       </tr>
