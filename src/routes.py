@@ -1,14 +1,12 @@
+import logging
 from urllib.parse import unquote
 
-from flask import Blueprint
-from flask import current_app as app
-from flask import jsonify, render_template, request
+from flask import Blueprint, jsonify, render_template, request
 
 from business.scraper.scrapy_runner import ScrapyRunner
-from log_utils import configure_logger
 from models import Attachment, Site
 
-logger = configure_logger()
+logger = logging.getLogger()
 
 main = Blueprint("main", __name__)
 

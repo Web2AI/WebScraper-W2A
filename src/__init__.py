@@ -2,10 +2,13 @@ import os
 
 from flask import Flask
 
+from log_utils import configure_logger
 from models import db
 
 
 def create_app():
+    configure_logger()
+
     app = Flask(__name__)
 
     # Configure the database
