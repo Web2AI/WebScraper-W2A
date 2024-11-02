@@ -7,8 +7,8 @@ import datetime
 
 import scrapy
 
-from scraper.items.base_item import BaseItem
 from models import SiteModel
+from scraper.items.base_item import BaseItem
 
 
 class SiteItem(BaseItem):

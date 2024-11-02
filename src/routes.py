@@ -3,8 +3,8 @@ from urllib.parse import unquote
 
 from flask import Blueprint, jsonify, render_template, request
 
-from scraper.scrapy_runner import ScrapyRunner
 from models import AttachmentModel, SiteModel, db
+from scraper.scrapy_runner import ScrapyRunner
 
 logger = logging.getLogger()
 

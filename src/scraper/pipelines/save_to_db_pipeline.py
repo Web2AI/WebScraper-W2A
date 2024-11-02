@@ -12,8 +12,8 @@ import logging
 from psycopg2 import IntegrityError
 
 from app import app
-from scraper.items.base_item import BaseItem
 from models import db
+from scraper.items.base_item import BaseItem
 
 logger = logging.getLogger()
 

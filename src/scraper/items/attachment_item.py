@@ -1,7 +1,7 @@
 import scrapy
 
-from scraper.items.base_item import BaseItem
 from models import AttachmentModel
+from scraper.items.base_item import BaseItem
 
 
 class AttachmentItem(BaseItem):

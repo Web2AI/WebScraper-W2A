@@ -1,5 +1,6 @@
-import scrapy
 from abc import ABC, abstractmethod
+
+import scrapy
 
 
 class BaseItem(scrapy.Item, ABC):

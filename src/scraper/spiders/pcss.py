@@ -4,8 +4,8 @@ import logging
 from urllib.parse import urlparse
 
 import scrapy
-from scrapy.linkextractors import LinkExtractor
 from bs4 import BeautifulSoup
+from scrapy.linkextractors import LinkExtractor
 
 from scraper.constants import TIMEOUT
 from scraper.filters.common_tags_filter import CommonTagsFilter
