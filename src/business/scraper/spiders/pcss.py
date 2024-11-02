@@ -66,9 +66,9 @@ class PcssSpider(scrapy.Spider):
                 callback=self.parse_rest,
                 meta={"parent_html": item["html"], "parent_url": item["url"]},
             )
-        filtered_content = self.common_tags_filter.filter(item["html"])
+        filtered_content = self.common_tags_filter.get_context()
         item["parent_url"] = item["url"]
-        item["json"] = json.dumps(filtered_content)
+        item["json"] = json.dumps(filtered_content, ensure_ascii=False)
         item["page_hash"] = self.generate_sha256_hash(item["json"])
         yield item
 
@@ -83,7 +83,7 @@ class PcssSpider(scrapy.Spider):
         # Log the scraped secondary URL and HTML length
         logger.debug(f"Current URL: {item['url']}, HTML Length: {len(item['html'])}")
         filtered_content = self.common_tags_filter.filter(item["html"])
-        item["json"] = json.dumps(filtered_content)
+        item["json"] = json.dumps(filtered_content, ensure_ascii=False)
         item["page_hash"] = self.generate_sha256_hash(item["json"])
         logger.info(f"Page hash: {item['page_hash']}")
         yield item  # TODO: add yield scrapy request like in parse_main (and adjust depth_limit)

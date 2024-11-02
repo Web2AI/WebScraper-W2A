@@ -61,5 +61,11 @@ def attachment():
 
     # Get attachments for the given URL from the database
     attachments = Attachment.query.filter_by(site_url=decoded_url).all()
+    page_item = Site.query.get(decoded_url)
 
-    return render_template("attachment.html", url=decoded_url, attachments=attachments)
+    return render_template(
+        "attachment.html",
+        url=decoded_url,
+        attachments=attachments,
+        page_item=page_item,
+    )
