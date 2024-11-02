@@ -69,7 +69,7 @@ class PcssSpider(scrapy.Spider):
         filtered_content = self.common_tags_filter.get_context()
         item["parent_url"] = item["url"]
         item["json"] = json.dumps(filtered_content, ensure_ascii=False)
-        item["page_hash"] = self.generate_sha256_hash(item["json"])
+        item["page_hash"] = self.generate_sha256_hash(filtered_content)
         yield item
 
     def parse_rest(self, response):
@@ -84,7 +84,7 @@ class PcssSpider(scrapy.Spider):
         logger.debug(f"Current URL: {item['url']}, HTML Length: {len(item['html'])}")
         filtered_content = self.common_tags_filter.filter(item["html"])
         item["json"] = json.dumps(filtered_content, ensure_ascii=False)
-        item["page_hash"] = self.generate_sha256_hash(item["json"])
+        item["page_hash"] = self.generate_sha256_hash(filtered_content)
         logger.info(f"Page hash: {item['page_hash']}")
         yield item  # TODO: add yield scrapy request like in parse_main (and adjust depth_limit)
 
@@ -94,6 +94,8 @@ class PcssSpider(scrapy.Spider):
 
     def generate_sha256_hash(self, content):
         sha256 = hashlib.sha256()
+        sorted(content)
+        content = json.dumps(content, ensure_ascii=False)
         sha256.update(content.encode())
         return sha256.hexdigest()
 
