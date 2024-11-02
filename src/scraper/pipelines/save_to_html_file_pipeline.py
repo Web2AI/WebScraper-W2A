@@ -9,29 +9,32 @@ import datetime
 import logging
 import os
 
-from itemadapter import ItemAdapter
-
-from business.scraper.items.stripped_html_item import StrippedHtmlItem
+from app import app
+from scraper.items.site_item import SiteItem
 
 logger = logging.getLogger()
 
 
 class SaveToHtmlFilePipeline:
     def process_item(self, item, spider):
-        adapter = ItemAdapter(item)
+        with app.app_context():
+            if not item.should_save():
+                return item
 
-        if isinstance(item, StrippedHtmlItem):
+        if isinstance(item, SiteItem):
 
             logger.debug(f"Saving {item["url"]} to file")
 
             timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
             output_dir = os.path.abspath(
-                os.path.join(os.path.dirname(__file__), "../../../../out")
+                os.path.join(os.path.dirname(__file__), "~/out")
             )  # TODO: figure out a way to make this path absolute, not relative
-            filename = f"{output_dir}/pcss-{adapter.get('url').replace('/','')}-{timestamp}.html"
+            filename = (
+                f"{output_dir}/pcss-{item.get('url').replace('/','')}-{timestamp}.html"
+            )
 
             os.makedirs(os.path.dirname(filename), exist_ok=True)
             with open(filename, "w") as f:
-                f.write(adapter.get("html"))
+                f.write(item.get("html"))
 
         return item

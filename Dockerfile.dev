@@ -1,6 +1,6 @@
 FROM python:3.12.2
 
-RUN useradd -m flask
+RUN useradd -m flask -d /w2a-scraper/app
 USER flask
 
 WORKDIR /w2a-scraper/app

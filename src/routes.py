@@ -3,8 +3,8 @@ from urllib.parse import unquote
 
 from flask import Blueprint, jsonify, render_template, request
 
-from business.scraper.scrapy_runner import ScrapyRunner
-from models import Attachment, Site
+from scraper.scrapy_runner import ScrapyRunner
+from models import AttachmentModel, SiteModel, db
 
 logger = logging.getLogger()
 
@@ -18,9 +18,18 @@ def index():
     return render_template("index.html")
 
 
+@main.route("/recreate_db")
+def recreate_db():
+    db.drop_all()
+    db.create_all()
+    sites = SiteModel.query.all()
+    message = "Database has been recreated successfully!"
+    return render_template("history.html", sites=sites, message=message)
+
+
 @main.route("/history")
 def history():
-    sites = Site.query.all()
+    sites = SiteModel.query.all()
     return render_template("history.html", sites=sites)
 
 
@@ -60,8 +69,8 @@ def attachment():
     decoded_url = unquote(url)
 
     # Get attachments for the given URL from the database
-    attachments = Attachment.query.filter_by(site_url=decoded_url).all()
-    page_item = Site.query.get(decoded_url)
+    attachments = AttachmentModel.query.filter_by(site_url=decoded_url).all()
+    page_item = SiteModel.query.get(decoded_url)
 
     return render_template(
         "attachment.html",

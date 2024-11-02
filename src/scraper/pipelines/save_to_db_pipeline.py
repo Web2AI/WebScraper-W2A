@@ -1,0 +1,38 @@
+# Define your item pipelines here
+#
+# Don't forget to add your pipeline to the ITEM_PIPELINES setting
+# See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
+
+
+# useful for handling different item types with a single interface
+# from itemadapter import ItemAdapter
+
+import logging
+
+from psycopg2 import IntegrityError
+
+from app import app
+from scraper.items.base_item import BaseItem
+from models import db
+
+logger = logging.getLogger()
+
+
+class SaveToDBPipeline:
+    def process_item(self, item: BaseItem, spider):
+        with app.app_context():
+            try:
+                if item is None:
+                    logger.error("Received None item, skipping...")
+                    return
+
+                if not item.should_save():
+                    return item
+
+                db.session.merge(item.model)
+                db.session.commit()
+            except IntegrityError:
+                db.session.rollback()
+                logger.error("Integrity constraint violation")
+
+        return item
