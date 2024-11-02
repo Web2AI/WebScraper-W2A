@@ -56,23 +56,20 @@ class PcssSpider(scrapy.Spider):
         self.common_tags_filter = CommonTagsFilter(item["html"])
 
         # Log the scraped primary URL and HTML length
-        logger.debug(f"Primary URL: {item['url']}, HTML Length: {len(item['html'])}")
+        logger.debug(f"Primary URL: {item['url']}, HTML Length: {len(item['html'])}\n")
 
         for next_page in self.get_next_pages(response):
-            logger.debug(f"Next page: {next_page}")
             yield scrapy.Request(
                 next_page,
                 callback=self.parse_rest,
                 meta={"parent_html": item["html"], "parent_url": item["url"]},
             )
-            break
 
         item["parent_url"] = item["url"]
         item["json"] = json.dumps(self.common_tags_filter.get_context())
         yield item
 
     def parse_rest(self, response):
-        logger.debug(f"Parsing response from secondary URL: {response.url}")
         item = StrippedHtmlItem()
         soup = BeautifulSoup(response.body, "html.parser")
         filtered_soup = UnneccessaryTagsFilter.filter(soup)
@@ -80,8 +77,7 @@ class PcssSpider(scrapy.Spider):
         item["url"] = self.remove_protocol(response.url)
         item["parent_url"] = response.meta["parent_url"]
 
-        # Log the scraped secondary URL and HTML length
-        logger.debug(f"Secondary URL: {item['url']}, HTML Length: {len(item['html'])}")
+        logger.debug(f"Currnet URL: {item['url']}, HTML Length: {len(item['html'])}")
 
         item["json"] = json.dumps(self.common_tags_filter.filter(item["html"]))
         yield item  # TODO: add yield scrapy request like in parse_main (and adjust depth_limit)
@@ -98,8 +94,6 @@ class PcssSpider(scrapy.Spider):
     def extract_attachments(self, site_url, soup):
         """Extract images, videos, and other attachments from the page."""
 
-        logger.debug(f"Extracting attachments from {site_url}")
-
         # Extract images
         images = soup.find_all("img")
         for img in images:
@@ -111,5 +105,4 @@ class PcssSpider(scrapy.Spider):
                 attachment["content"] = None
                 attachment["url"] = src
 
-                logger.debug("Yielding image attachment")
                 yield attachment
