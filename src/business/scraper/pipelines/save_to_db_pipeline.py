@@ -12,7 +12,7 @@ import logging
 from psycopg2 import IntegrityError
 
 from app import app
-from models import db
+from models import Attachment, Site, db
 
 logger = logging.getLogger()
 
@@ -27,8 +27,17 @@ class SaveToDBPipeline:
                     return
 
                 db_item = item.model
-                db.session.merge(db_item)
-                db.session.commit()
+                if isinstance(db_item, Site):
+                    existing_item = Site.query.get(item["url"])
+                    if existing_item is None:
+                        db.session.add(db_item)
+                        db.session.commit()
+                    elif existing_item.page_hash != item["page_hash"]:
+                        db.session.merge(db_item)
+                        db.session.commit()
+                if isinstance(db_item, Attachment):
+                    db.session.merge(db_item)
+                    db.session.commit()
             except IntegrityError:
                 db.session.rollback()
                 logger.error("Integrity constraint violation")

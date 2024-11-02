@@ -16,6 +16,7 @@ class StrippedHtmlItem(scrapy.Item):
     html = scrapy.Field()
     json = scrapy.Field()
     attachments_meta = scrapy.Field()
+    page_hash = scrapy.Field()
 
     @property
     def model(self):
@@ -24,4 +25,5 @@ class StrippedHtmlItem(scrapy.Item):
             parent_url=self["parent_url"],
             json=self["json"],
             date=datetime.datetime.now(),
+            page_hash=self["page_hash"],
         )
