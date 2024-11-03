@@ -24,7 +24,7 @@ class SaveToDBPipeline:
             try:
                 if item is None:
                     logger.error("Received None item, skipping...")
-                    return
+                    return item
 
                 if not item.should_save():
                     return item

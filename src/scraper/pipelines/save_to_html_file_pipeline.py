@@ -18,21 +18,22 @@ logger = logging.getLogger()
 
 class SaveToHtmlFilePipeline:
     def process_item(self, item, spider):
+        if not isinstance(item, SiteItem):
+            return item
+
         with app.app_context():
             if not item.should_save():
                 return item
 
-        if isinstance(item, SiteItem):
+        logger.debug(f"Saving {item["url"]} to file")
 
-            logger.debug(f"Saving {item["url"]} to file")
+        timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+        project_dir = os.getenv("PROJECT_DIR")
+        output_dir = Path(project_dir, "out").resolve()
+        filename = f"{item.get('url').replace('/','')}-{timestamp}.html"
 
-            timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-            project_dir = os.getenv("PROJECT_DIR")
-            output_dir = Path(project_dir, "out").resolve()
-            filename = f"{item.get('url').replace('/','')}-{timestamp}.html"
-
-            os.makedirs(os.path.dirname(output_dir), exist_ok=True)
-            with open(Path(output_dir, filename), "w") as f:
-                f.write(item.get("html"))
+        os.makedirs(os.path.dirname(output_dir), exist_ok=True)
+        with open(Path(output_dir, filename), "w") as f:
+            f.write(item.get("html"))
 
         return item

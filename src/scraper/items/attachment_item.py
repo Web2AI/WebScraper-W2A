@@ -1,3 +1,4 @@
+from functools import cached_property
 import scrapy
 
 from models import AttachmentModel
@@ -20,5 +21,6 @@ class AttachmentItem(BaseItem):
             url=self.get("url"),
         )
 
+    @cached_property
     def should_save(self):
         return True
