@@ -39,8 +39,6 @@ class PcssSpider(scrapy.Spider):
 
         yield site
 
-        return
-
         for next_page in LinkExtractor().extract_links(response):
             yield response.follow(
                 next_page,

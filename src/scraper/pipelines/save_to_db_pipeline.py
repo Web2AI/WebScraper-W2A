@@ -20,14 +20,16 @@ logger = logging.getLogger()
 
 class SaveToDBPipeline:
     def process_item(self, item: BaseItem, spider):
+        if item is None:
+            logger.error("Received None item, skipping...")
+            return item
+
         with app.app_context():
             try:
-                if item is None:
-                    logger.error("Received None item, skipping...")
-                    return item
-
                 if not item.should_save():
                     return item
+
+                logger.debug(f"Saving {item["url"]} to db")
 
                 db.session.merge(item.model)
                 db.session.commit()
