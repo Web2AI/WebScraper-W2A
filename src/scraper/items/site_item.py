@@ -4,11 +4,14 @@
 # https://docs.scrapy.org/en/latest/topics/items.html
 
 import datetime
+import logging
 
 import scrapy
 
 from models import SiteModel
 from scraper.items.base_item import BaseItem
+
+logger = logging.getLogger()
 
 
 class SiteItem(BaseItem):

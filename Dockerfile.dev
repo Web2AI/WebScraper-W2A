@@ -1,6 +1,6 @@
 FROM python:3.12.2
 
-RUN useradd -m flask -d /w2a-scraper/app
+RUN useradd -m flask
 USER flask
 
 WORKDIR /w2a-scraper/app
@@ -10,6 +10,7 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 
 ENV FLASK_APP=app
 ENV FLASK_ENV=development
+ENV PROJECT_DIR=/w2a-scraper/app
 
 WORKDIR /w2a-scraper/app/src
 

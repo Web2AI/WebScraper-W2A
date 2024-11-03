@@ -29,8 +29,8 @@ class ScrapyRunner:
         settings.set(
             "ITEM_PIPELINES",
             {
-                "scraper.pipelines.save_to_db_pipeline.SaveToDBPipeline": 300,
-                "scraper.pipelines.save_to_html_file_pipeline.SaveToHtmlFilePipeline": 350,
+                "scraper.pipelines.save_to_html_file_pipeline.SaveToHtmlFilePipeline": 300,
+                "scraper.pipelines.save_to_db_pipeline.SaveToDBPipeline": 350,
             },
         )
         # settings.set("CONCURRENT_REQUESTS", 32)
