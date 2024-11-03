@@ -38,7 +38,7 @@ class PcssSpider(scrapy.Spider):
         site = self.create_site_item(response, response.meta.get("parent_url"))
 
         yield site
-        return
+
         for next_page in LinkExtractor().extract_links(response):
             yield response.follow(
                 next_page,
