@@ -5,6 +5,7 @@
 
 import datetime
 import logging
+from functools import cached_property
 
 import scrapy
 
@@ -32,6 +33,7 @@ class SiteItem(BaseItem):
             page_hash=self.get("page_hash"),
         )
 
+    @cached_property
     def should_save(self):
         existing_item = SiteModel.query.get(self.get("url"))
         if existing_item is not None and existing_item.page_hash == self.get(

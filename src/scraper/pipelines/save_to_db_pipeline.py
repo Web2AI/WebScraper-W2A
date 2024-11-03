@@ -26,7 +26,7 @@ class SaveToDBPipeline:
 
         with app.app_context():
             try:
-                if not item.should_save():
+                if not item.should_save:
                     return item
 
                 logger.debug(f"Saving {item["url"]} to db")

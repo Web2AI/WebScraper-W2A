@@ -22,7 +22,7 @@ class SaveToHtmlFilePipeline:
             return item
 
         with app.app_context():
-            if not item.should_save():
+            if not item.should_save:
                 return item
 
         logger.debug(f"Saving {item["url"]} to file")

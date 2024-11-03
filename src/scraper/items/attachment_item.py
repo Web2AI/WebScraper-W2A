@@ -1,4 +1,5 @@
 from functools import cached_property
+
 import scrapy
 
 from models import AttachmentModel
