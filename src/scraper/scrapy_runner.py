@@ -6,7 +6,8 @@ from scrapy.crawler import CrawlerRunner
 from scrapy.settings import Settings
 from scrapy.signalmanager import dispatcher
 
-from business.scraper.spiders.pcss import PcssSpider
+from scraper.constants import TIMEOUT
+from scraper.spiders.pcss import PcssSpider
 
 crochet.setup()  # Initialize crochet
 
@@ -28,10 +29,13 @@ class ScrapyRunner:
         settings.set(
             "ITEM_PIPELINES",
             {
-                "business.scraper.pipelines.save_to_html_file_pipeline.SaveToHtmlFilePipeline": 300,
-                "business.scraper.pipelines.save_to_db_pipeline.SaveToDBPipeline": 350,
+                "scraper.pipelines.save_to_html_file_pipeline.SaveToHtmlFilePipeline": 300,
+                "scraper.pipelines.save_to_db_pipeline.SaveToDBPipeline": 350,
             },
         )
+        # settings.set("CONCURRENT_REQUESTS", 32)
+        # settings.set("CONCURRENT_REQUESTS_PER_DOMAIN", 16)
+        # settings.set("CONCURRENT_REQUESTS_PER_IP", 16)
         settings.set("LOG_LEVEL", "DEBUG")
 
         return settings
@@ -45,7 +49,7 @@ class ScrapyRunner:
     def _handle_error(self, failure, request_id):
         self.errors[request_id] = str(failure)
 
-    @crochet.wait_for(timeout=60.0)
+    @crochet.wait_for(timeout=TIMEOUT)
     def scrape(self, primary_url, request_id):
         # Initialize result storage for this request
         self.results[request_id] = []

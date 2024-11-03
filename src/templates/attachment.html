@@ -5,23 +5,21 @@
   <div class="flex justify-end mb-4">{{page_item.date}}</div>
   <div class="flex justify-between mb-4">
     <a
+      href="{{ url_for('main.history') }}"
+      class="block px-6 bg-blue-500 text-white font-semibold py-2 rounded-lg hover:bg-blue-600 transition duration-200 text-center"
+    >
+      Back to History
+    </a>
+    <a
       href="{{ 'https://' + url }}"
       target="_blank"
       class="block px-6 bg-white text-blue-500 font-semibold py-2 rounded-lg hover:bg-gray-100 transition duration-200 text-center"
     >
       Go to website
     </a>
-    <a
-      href="{{ url_for('main.history') }}"
-      class="block px-6 bg-blue-500 text-white font-semibold py-2 rounded-lg hover:bg-blue-600 transition duration-200 text-center"
-    >
-      Back to History
-    </a>
   </div>
   <h1 class="text-3xl font-bold text-center mb-4">{{ url }} content</h1>
-  <div class="p-4">
-    {{ page_item.json}}
-  </div>
+  <div class="p-4">{{ page_item.json}}</div>
   <h1 class="text-3xl font-bold text-center mb-4">Attachments</h1>
   <table class="min-w-full bg-white">
     <thead>
