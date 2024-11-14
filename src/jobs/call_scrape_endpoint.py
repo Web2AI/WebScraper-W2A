@@ -1,6 +1,9 @@
+import logging
 import requests
 
 from constants import TIMEOUT
+
+logger = logging.getLogger()
 
 
 def call_scrape_endpoint(primary_url):
@@ -12,8 +15,8 @@ def call_scrape_endpoint(primary_url):
             timeout=TIMEOUT,
         )
         if response.status_code == 200:
-            print("Job triggered successfully!")
+            logger.info(f"Scraping for {primary_url} triggered successfully!")
         else:
-            print("Failed to trigger job:", response.status_code)
+            logger.error("Failed to trigger job:", response.status_code)
     except Exception as e:
-        print("Error triggering job:", e)
+        logger.error("Error triggering job:", e)
