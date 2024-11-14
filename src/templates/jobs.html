@@ -1,0 +1,40 @@
+{% extends "base.html" %} {% block title %}Job Scheduler{% endblock %} {% block
+content %}
+<div
+  class="bg-white shadow-lg rounded-lg p-8 w-full max-w-md"
+  x-data="schedulerApp()"
+>
+  <div class="flex justify-between mb-4">
+    <a
+      href="/"
+      class="block px-6 bg-blue-500 text-white font-semibold py-2 rounded-lg hover:bg-blue-600 transition duration-200 text-center"
+    >
+      Back
+    </a>
+  </div>
+  <h1 class="text-3xl font-bold text-center mb-4">Job Scheduler</h1>
+  <h2 class="text-xl font-semibold text-center mb-8">Manage Scheduled Jobs</h2>
+
+  <!-- Job List -->
+  <div x-show="loading" class="text-center text-blue-500">Loading...</div>
+  <template x-if="!loading && jobs.length > 0">
+    <ul class="space-y-4">
+      <template x-for="job in jobs" :key="job.id">
+        <li class="p-4 bg-gray-100 rounded-lg shadow-md">
+          <div>
+            <h3 class="font-semibold" x-text="job.args[0]"></h3>
+            <p
+              class="text-sm text-gray-600"
+              x-text="'Next Run: ' + formatDate(job.next_run_time)"
+            ></p>
+          </div>
+        </li>
+      </template>
+    </ul>
+  </template>
+  <p x-show="!loading && jobs.length === 0" class="text-center text-gray-500">
+    No jobs scheduled.
+  </p>
+</div>
+<script src="{{ url_for('static', filename='js/jobs.js') }}"></script>
+{% endblock %}

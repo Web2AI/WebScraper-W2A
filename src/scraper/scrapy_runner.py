@@ -6,7 +6,7 @@ from scrapy.crawler import CrawlerRunner
 from scrapy.settings import Settings
 from scrapy.signalmanager import dispatcher
 
-from scraper.constants import TIMEOUT
+from constants import TIMEOUT
 from scraper.spiders.pcss import PcssSpider
 
 crochet.setup()  # Initialize crochet
