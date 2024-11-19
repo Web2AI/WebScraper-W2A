@@ -13,7 +13,7 @@ def create_app():
 
     # Initialize Flask app
     app = Flask(__name__)
-    app.config.from_object("scheduled_jobs")
+    app.config.from_object("scheduled_jobs_config")
 
     # Configure the database
     app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("SQLALCHEMY_DATABASE_URI")
