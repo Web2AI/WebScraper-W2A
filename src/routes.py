@@ -78,3 +78,10 @@ def attachment():
         attachments=attachments,
         page_item=page_item,
     )
+
+
+@main.route("/jobs")
+def jobs():
+    return render_template(
+        "jobs.html",
+    )

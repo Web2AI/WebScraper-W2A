@@ -7,7 +7,7 @@ import scrapy
 from bs4 import BeautifulSoup
 from scrapy.linkextractors import LinkExtractor
 
-from scraper.constants import TIMEOUT
+from constants import TIMEOUT
 from scraper.filters.common_tags_filter import CommonTagsFilter
 from scraper.filters.unneccessary_tags_filter import UnneccessaryTagsFilter
 from scraper.items.attachment_item import AttachmentItem
