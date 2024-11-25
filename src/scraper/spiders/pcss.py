@@ -18,7 +18,10 @@ logger = logging.getLogger()
 
 class PcssSpider(scrapy.Spider):
     # TODO: when changing subdomain use different common_tags_filter (maybe dict of them?)
-    allowed_domains = ["pcss.pl"]  # all pcss.pl subdomains
+    allowed_domains = [  # all pcss.pl and pionier.net.pl subdomains
+        "pcss.pl",
+        "pionier.net.pl",
+    ]
     name = "pcss"
     download_timeout = TIMEOUT
     custom_settings = {"DEPTH_LIMIT": DEPTH_LIMIT}
@@ -47,7 +50,7 @@ class PcssSpider(scrapy.Spider):
             )
 
         yield from self.extract_attachments(
-            site["url"], BeautifulSoup(response.body, "html.parser")
+            site["url"], BeautifulSoup(site["html"], "html.parser")
         )
 
     def create_site_item(self, response, parent_url=None):
