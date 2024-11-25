@@ -7,7 +7,7 @@ import scrapy
 from bs4 import BeautifulSoup
 from scrapy.linkextractors import LinkExtractor
 
-from constants import TIMEOUT
+from constants import TIMEOUT, DEPTH_LIMIT
 from scraper.filters.common_tags_filter import CommonTagsFilter
 from scraper.filters.unneccessary_tags_filter import UnneccessaryTagsFilter
 from scraper.items.attachment_item import AttachmentItem
@@ -21,7 +21,7 @@ class PcssSpider(scrapy.Spider):
     allowed_domains = ["pcss.pl"]  # all pcss.pl subdomains
     name = "pcss"
     download_timeout = TIMEOUT
-    custom_settings = {"DEPTH_LIMIT": 1}
+    custom_settings = {"DEPTH_LIMIT": DEPTH_LIMIT}
 
     def __init__(self, primary_url, request_id, **kwargs):
         super().__init__(**kwargs)
