@@ -26,6 +26,6 @@ class CommonTagsFilter:
         unique_texts = [text for text in tag_texts if text not in self.context]
 
         if not unique_texts:
-            raise ValueError("No unique texts found")
+            raise ValueError("Site is the same as the context")
 
         return unique_texts

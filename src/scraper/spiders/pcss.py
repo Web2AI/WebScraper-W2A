@@ -38,7 +38,11 @@ class PcssSpider(scrapy.Spider):
         yield scrapy.Request(self._primary_url, callback=self.parse)
 
     def parse(self, response):
-        site = self.create_site_item(response, response.meta.get("parent_url"))
+        try:
+            site = self.create_site_item(response, response.meta.get("parent_url"))
+        except ValueError as e:
+            logger.error(f"Error while parsing {site["url"]}: {e}")
+            return  # skip this site
 
         yield site
 
