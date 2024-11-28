@@ -8,6 +8,7 @@
 import datetime
 import logging
 import os
+import re
 from pathlib import Path
 
 import markdownify as md
@@ -20,18 +21,9 @@ logger = logging.getLogger()
 
 class SaveToMdFilePipeline:
 
+    # Remove multiple newlines
     def remove_newlines(self, md_text):
-        md_lines = md_text.split("\n")
-        newlines_count = 0
-        new_md_lines = []
-        for line in md_lines:
-            if line == "":
-                newlines_count += 1
-            else:
-                newlines_count = 0
-            if newlines_count < 2:
-                new_md_lines.append(line)
-        return "\n".join(new_md_lines)
+        return re.sub(r"\n\s*\n+", "\n\n", md_text)
 
     def process_item(self, item, spider):
         if not isinstance(item, SiteItem):
