@@ -19,6 +19,20 @@ logger = logging.getLogger()
 
 
 class SaveToMdFilePipeline:
+
+    def remove_newlines(self, md_text):
+        md_lines = md_text.split("\n")
+        newlines_count = 0
+        new_md_lines = []
+        for line in md_lines:
+            if line == "":
+                newlines_count += 1
+            else:
+                newlines_count = 0
+            if newlines_count < 2:
+                new_md_lines.append(line)
+        return "\n".join(new_md_lines)
+
     def process_item(self, item, spider):
         if not isinstance(item, SiteItem):
             return item
@@ -36,6 +50,8 @@ class SaveToMdFilePipeline:
 
         os.makedirs(os.path.dirname(output_dir), exist_ok=True)
         md_text = md.markdownify(item.get("html"), heading_style="ATX")
+        md_text = self.remove_newlines(md_text)
+
         with open(Path(output_dir, filename), "w") as f:
             f.write(md_text)
 
