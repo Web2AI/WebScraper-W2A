@@ -19,4 +19,5 @@ pcss-*.html
 .vscode/
 
 # Output files
-out/*.html
+out/html_files/*.html
+out/md_files/*.md
