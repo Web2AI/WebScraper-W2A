@@ -1,6 +1,7 @@
 import hashlib
 import json
 import logging
+import re
 from urllib.parse import urlparse
 
 import scrapy
@@ -22,6 +23,7 @@ class PcssSpider(scrapy.Spider):
         "pcss.pl",
         "pionier.net.pl",
     ]
+    denied_links = r"\.(zip|pdf|exe|rar|tar|gz|7z|docx|mp3|mp4|xml)$"
     name = "pcss"
     download_timeout = TIMEOUT
     custom_settings = {"DEPTH_LIMIT": DEPTH_LIMIT}
@@ -38,10 +40,15 @@ class PcssSpider(scrapy.Spider):
         yield scrapy.Request(self._primary_url, callback=self.parse)
 
     def parse(self, response):
+
+        if re.search(self.denied_links, response.url):
+            logger.warning(f"Denied link found, skipping: {response.url}")
+            return
+
         try:
             site = self.create_site_item(response, response.meta.get("parent_url"))
         except ValueError as e:
-            logger.error(f"Error while parsing {site["url"]}: {e}")
+            logger.error(f"Error while parsing the {response.url} : {e}")
             return  # skip this site
 
         yield site
