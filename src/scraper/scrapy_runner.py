@@ -30,6 +30,7 @@ class ScrapyRunner:
             "ITEM_PIPELINES",
             {
                 "scraper.pipelines.save_to_html_file_pipeline.SaveToHtmlFilePipeline": 300,
+                "scraper.pipelines.save_to_md_file_pipeline.SaveToMdFilePipeline": 333,
                 "scraper.pipelines.save_to_db_pipeline.SaveToDBPipeline": 350,
             },
         )

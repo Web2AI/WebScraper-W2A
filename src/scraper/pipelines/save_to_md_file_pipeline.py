@@ -8,7 +8,10 @@
 import datetime
 import logging
 import os
+import re
 from pathlib import Path
+
+import markdownify as md
 
 from app import app
 from scraper.items.site_item import SiteItem
@@ -16,7 +19,12 @@ from scraper.items.site_item import SiteItem
 logger = logging.getLogger()
 
 
-class SaveToHtmlFilePipeline:
+class SaveToMdFilePipeline:
+
+    # Remove multiple newlines
+    def remove_newlines(self, md_text):
+        return re.sub(r"\n\s*\n+", "\n\n", md_text)
+
     def process_item(self, item, spider):
         if not isinstance(item, SiteItem):
             return item
@@ -29,11 +37,14 @@ class SaveToHtmlFilePipeline:
 
         timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
         project_dir = os.getenv("PROJECT_DIR")
-        output_dir = Path(project_dir, "out", "html_files").resolve()
-        filename = f"{item.get('url').replace('/','')}-{timestamp}.html"
+        output_dir = Path(project_dir, "out", "md_files").resolve()
+        filename = f"{item.get('url').replace('/','')}-{timestamp}.md"
 
         os.makedirs(os.path.dirname(output_dir), exist_ok=True)
+        md_text = md.markdownify(item.get("html"), heading_style="ATX")
+        md_text = self.remove_newlines(md_text)
+
         with open(Path(output_dir, filename), "w") as f:
-            f.write(item.get("html"))
+            f.write(md_text)
 
         return item
