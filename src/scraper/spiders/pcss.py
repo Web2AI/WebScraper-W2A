@@ -42,12 +42,12 @@ class PcssSpider(scrapy.Spider):
 
         yield site
 
-        for next_page in LinkExtractor().extract_links(response):
-            yield response.follow(
-                next_page,
-                callback=self.parse,
-                meta={"parent_html": site["html"], "parent_url": site["url"]},
-            )
+        # for next_page in LinkExtractor().extract_links(response):
+        #     yield response.follow(
+        #         next_page,
+        #         callback=self.parse,
+        #         meta={"parent_html": site["html"], "parent_url": site["url"]},
+        #     )
 
         yield from self.extract_attachments(
             site["url"], BeautifulSoup(site["html"], "html.parser")
@@ -66,7 +66,6 @@ class PcssSpider(scrapy.Spider):
             item["json"] = self.common_tags_filter.get_context()
 
         item["page_hash"] = self.generate_sha256_hash(item["json"])
-        logger.info(f"Page hash: {item['page_hash']}")
         if parent_url:
             item["parent_url"] = parent_url
 
