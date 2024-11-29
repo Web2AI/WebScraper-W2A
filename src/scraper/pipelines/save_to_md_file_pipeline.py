@@ -5,6 +5,7 @@ import re
 from pathlib import Path
 import asyncio
 import requests
+import httpx
 
 import markdownify as md
 
@@ -16,35 +17,38 @@ logger = logging.getLogger()
 
 class SaveToMdFilePipeline:
 
-    async def fetch_description(self, url):
+    def fetch_description(self, url):
         ai_service_url = os.getenv(
             "AI_SERVICE_URL", "http://ai-description:8000/generate-description/"
         )
         try:
-            logger.debug(f"Sending POST request to {ai_service_url} with URL: {url}")
-            response = requests.post(ai_service_url, json={"url": url})
-            response.raise_for_status()  # This will raise an HTTPError for bad responses (4xx, 5xx)
-
-            logger.debug(f"Response status code: {response.status_code}")
-            logger.debug(f"Response body: {response.text}")
-
+            response = httpx.post(ai_service_url, json={"url": url})
+            response.raise_for_status()
             return response.json().get("description", "No description available")
-        except requests.exceptions.RequestException as e:
-            logger.error(f"Request failed: {e}")
+        except Exception as e:
+            logger.error(f"Request to {ai_service_url} failed: {e}")
             return f"Error generating description: {e}"
 
     # Replace ![](image_url) with AI description
-    async def replace_images_with_descriptions(self, md_text):
+    def replace_images_with_descriptions(self, md_text):
         def replacement(match):
-            image_url = match.group(1)
-            description = asyncio.run(self.fetch_description(image_url))
-            return f"[image]({description})"
+            image_url = match.group(2)  # Match the image URL (2nd capture group)
+            description = self.fetch_description(image_url)
+            logger.debug(f"For image {image_url} generated description: {description}")
+            return f"<image: {description}>"
 
-        return re.sub(r"!\[(.*?)\]\((https?://[^\s]+)\)", replacement, md_text)
+        pattern = r"!\[(.*?)\]\((https?://[^\s]+?\.(?:jpg|jpeg|png))\)"
+        updated_text = re.sub(pattern, replacement, md_text)
+
+        return updated_text
 
     # Remove multiple newlines
     def remove_newlines(self, md_text):
         return re.sub(r"\n\s*\n+", "\n\n", md_text)
+
+    def remove_links(self, md_text):
+        pattern = r"\[([^\]]+)\]\((https?://[^\s]+)\)"
+        return re.sub(pattern, r"\1", md_text)
 
     async def process_item(self, item, spider):
         if not isinstance(item, SiteItem):
@@ -61,8 +65,9 @@ class SaveToMdFilePipeline:
 
         os.makedirs(os.path.dirname(output_dir), exist_ok=True)
         md_text = md.markdownify(item.get("html"), heading_style="ATX")
-        md_text = await self.replace_images_with_descriptions(md_text)
+        md_text = self.replace_images_with_descriptions(md_text)
         md_text = self.remove_newlines(md_text)
+        md_text = self.remove_links(md_text)
 
         with open(Path(output_dir, filename), "w") as f:
             f.write(md_text)

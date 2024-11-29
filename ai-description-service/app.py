@@ -12,6 +12,7 @@ import logging
 app = FastAPI()
 logger = logging.getLogger()
 
+
 class ImageRequest(BaseModel):
     url: str
 
