@@ -49,3 +49,13 @@ def configure_logger():
 
     # Set Flask logging level to INFO
     logging.getLogger("werkzeug").setLevel(logging.INFO)
+
+    # Set httpx logging level to WARNING
+    logging.getLogger("httpx").setLevel(logging.WARNING)
+    logging.getLogger("httpcore").setLevel(logging.WARNING)
+
+    # TODO improve logging
+    # logging.getLogger("markdown2").setLevel(logging.CRITICAL)
+    # logging.getLogger("weasyprint").setLevel(logging.CRITICAL)
+    # logging.getLogger("tzlocal").setLevel(logging.CRITICAL)
+    # logging.getLogger("fontTools").setLevel(logging.CRITICAL)

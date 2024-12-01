@@ -31,8 +31,6 @@ async def generate_description(image: ImageRequest):
             raise HTTPException(
                 status_code=400, detail="Failed to fetch image from URL"
             )
-
-        # Load image into PIL
         image = Image.open(BytesIO(response.content)).convert("RGB")
 
         # Preprocess image and generate caption

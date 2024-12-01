@@ -42,12 +42,12 @@ class PcssSpider(scrapy.Spider):
 
         yield site
 
-        # for next_page in LinkExtractor().extract_links(response):
-        #     yield response.follow(
-        #         next_page,
-        #         callback=self.parse,
-        #         meta={"parent_html": site["html"], "parent_url": site["url"]},
-        #     )
+        for next_page in LinkExtractor().extract_links(response):
+            yield response.follow(
+                next_page,
+                callback=self.parse,
+                meta={"parent_html": site["html"], "parent_url": site["url"]},
+            )
 
         yield from self.extract_attachments(
             site["url"], BeautifulSoup(site["html"], "html.parser")
