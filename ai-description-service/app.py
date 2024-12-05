@@ -1,13 +1,12 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-
-from PIL import Image
-from transformers import BlipProcessor, BlipForConditionalGeneration
-import torch
-from io import BytesIO
-import requests
 import logging
+from io import BytesIO
 
+import requests
+import torch
+from fastapi import FastAPI, HTTPException
+from PIL import Image
+from pydantic import BaseModel
+from transformers import BlipForConditionalGeneration, BlipProcessor
 
 app = FastAPI()
 logger = logging.getLogger()
