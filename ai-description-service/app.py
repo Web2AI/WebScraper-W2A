@@ -25,7 +25,7 @@ model = BlipForConditionalGeneration.from_pretrained(model_name).to(device)
 @app.post("/generate-description/")
 async def generate_description(image: ImageRequest):
     try:
-        response = requests.get(image.url)
+        response = requests.get(image.url, timeout=5)
         if response.status_code != 200:
             raise HTTPException(
                 status_code=400, detail="Failed to fetch image from URL"
@@ -40,5 +40,5 @@ async def generate_description(image: ImageRequest):
         return {"description": caption}
 
     except Exception as e:
-        print(f"Error generating description: {e}")
+        logger.error(f"Error generating description: {e}")
         raise HTTPException(status_code=500, detail=str(e))

@@ -25,7 +25,7 @@ class SaveToPdfPipeline:
         )
         try:
             url = re.findall(r"https?://[^\s]+?\.(?:jpg|jpeg|png|gif|svg)", url)[0]
-            response = httpx.post(ai_service_url, json={"url": url})
+            response = httpx.post(ai_service_url, json={"url": url}, timeout=10)
             response.raise_for_status()
             return response.json().get("description", "No description available")
         except Exception as e:
