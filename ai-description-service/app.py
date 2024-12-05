@@ -30,10 +30,10 @@ async def generate_description(image: ImageRequest):
             raise HTTPException(
                 status_code=400, detail="Failed to fetch image from URL"
             )
-        image = Image.open(BytesIO(response.content)).convert("RGB")
+        img = Image.open(BytesIO(response.content)).convert("RGB")
 
         # Preprocess image and generate caption
-        inputs = processor(images=image, return_tensors="pt").to(device)
+        inputs = processor(images=img, return_tensors="pt").to(device)
         output_ids = model.generate(**inputs, max_new_tokens=50)
         caption = processor.decode(output_ids[0], skip_special_tokens=True)
         logger.info(f"Generated caption: {caption}")
