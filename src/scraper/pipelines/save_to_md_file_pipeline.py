@@ -33,7 +33,7 @@ class SaveToMdFilePipeline:
             if not item.should_save:
                 return item
 
-        logger.debug(f"Saving {item["url"]} to file")
+        logger.debug(f"Saving {item["url"]} to .md file")
 
         timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
         project_dir = os.getenv("PROJECT_DIR")
