@@ -7,4 +7,4 @@ RUN python -c "from transformers import BlipProcessor, BlipForConditionalGenerat
               model = BlipForConditionalGeneration.from_pretrained('Salesforce/blip-image-captioning-base')"
 COPY . .
 EXPOSE 8000
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["python", "app.py"]
