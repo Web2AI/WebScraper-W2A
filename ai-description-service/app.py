@@ -3,7 +3,7 @@ from io import BytesIO
 
 import requests
 import torch
-from flask import Flask, request, jsonify
+from flask import Flask, jsonify, request
 from PIL import Image
 from transformers import BlipForConditionalGeneration, BlipProcessor
 
