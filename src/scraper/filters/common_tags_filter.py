@@ -24,4 +24,8 @@ class CommonTagsFilter:
 
         # Collect unique texts while preserving the order
         unique_texts = [text for text in tag_texts if text not in self.context]
+
+        if not unique_texts:
+            raise ValueError("Site is the same as the context")
+
         return unique_texts

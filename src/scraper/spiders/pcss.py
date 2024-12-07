@@ -1,6 +1,7 @@
 import hashlib
 import json
 import logging
+import re
 from urllib.parse import urlparse
 
 import scrapy
@@ -22,6 +23,8 @@ class PcssSpider(scrapy.Spider):
         "pcss.pl",
         "pionier.net.pl",
     ]
+    denied_links = r"\.(zip|exe|rar|tar|gz|7z|docx|mp3|mp4|xml)$"
+    downloadable_extensions = r"\.(pdf|doc|docx)$"
     name = "pcss"
     download_timeout = TIMEOUT
     custom_settings = {"DEPTH_LIMIT": DEPTH_LIMIT}
@@ -38,7 +41,29 @@ class PcssSpider(scrapy.Spider):
         yield scrapy.Request(self._primary_url, callback=self.parse)
 
     def parse(self, response):
-        site = self.create_site_item(response, response.meta.get("parent_url"))
+
+        # Filter out denied links
+        if re.search(self.denied_links, response.url):
+            logger.warning(f"Denied link found, skipping: {response.url}")
+            return
+
+        # Save to database if it's a downloadable file
+        # In this case, the attachment's url is the parent's url
+        if re.search(self.downloadable_extensions, response.url):
+            logger.debug(f"Saving to database file: {response.url}")
+            yield AttachmentItem(
+                site_url=response.meta.get("parent_url"),
+                type=response.url.split(".")[-1],
+                content=None,
+                url=response.url,
+            )
+            return
+
+        try:
+            site = self.create_site_item(response, response.meta.get("parent_url"))
+        except ValueError as e:
+            logger.error(f"Error while parsing the {response.url} : {e}")
+            return  # skip this site
 
         yield site
 
