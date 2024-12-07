@@ -16,4 +16,16 @@ services:
     image: postgres:latest
     ports:
       - 5432:5432
-    # we can add volume if we want to preserve the data
+  chatbot-chromadb:
+    image: chromadb/chroma:0.5.7
+    volumes:
+      - chatbot-chromaDB-volume:/chroma/chroma
+    environment:
+      - IS_PERSISTENT=TRUE
+      - PERSIST_DIRECTORY=/chroma/chroma
+      - ANONYMIZED_TELEMETRY=${ANONYMIZED_TELEMETRY:-FALSE}
+    ports:
+      - 8001:8000
+
+volumes:
+  chatbot-chromaDB-volume:
