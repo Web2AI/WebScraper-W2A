@@ -23,7 +23,8 @@ class PcssSpider(scrapy.Spider):
         "pcss.pl",
         "pionier.net.pl",
     ]
-    denied_links = r"\.(zip|pdf|exe|rar|tar|gz|7z|docx|mp3|mp4|xml)$"
+    denied_links = r"\.(zip|exe|rar|tar|gz|7z|docx|mp3|mp4|xml)$"
+    downloadable_extensions = r"\.(pdf|doc|docx)$"
     name = "pcss"
     download_timeout = TIMEOUT
     custom_settings = {"DEPTH_LIMIT": DEPTH_LIMIT}
@@ -41,8 +42,21 @@ class PcssSpider(scrapy.Spider):
 
     def parse(self, response):
 
+        # Filter out denied links
         if re.search(self.denied_links, response.url):
             logger.warning(f"Denied link found, skipping: {response.url}")
+            return
+
+        # Save to database if it's a downloadable file
+        # In this case, the attachment's url is the parent's url
+        if re.search(self.downloadable_extensions, response.url):
+            logger.debug(f"Saving to database file: {response.url}")
+            yield AttachmentItem(
+                site_url=response.meta.get("parent_url"),
+                type=response.url.split(".")[-1],
+                content=None,
+                url=response.url,
+            )
             return
 
         try:
