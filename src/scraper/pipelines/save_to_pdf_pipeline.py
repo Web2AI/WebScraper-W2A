@@ -50,7 +50,7 @@ class SaveToPdfPipeline:
             # description = alt_text if alt_text else results[image_url]
             logger.debug(f"Generated description for {image_url}: {description}")
             replacement_pattern = rf"!\[{alt_text}\]\({image_url}(?:\s+\".*?\")?\)"
-            replacement = f"*image: {description}*"
+            replacement = f"\*image: {description}\*"
             md_text = re.sub(replacement_pattern, replacement, md_text, count=1)
 
         return md_text
@@ -61,7 +61,13 @@ class SaveToPdfPipeline:
 
     def remove_svg(self, md_text):
         patern = r"!\[(.*?)\]\((https?://[^\s]+?\.(?:svg))(?:\s+\".*?\")?\)"
-        return re.sub(patern, "*image: svg*", md_text)
+        return re.sub(patern, "\*image: svg\*", md_text)
+
+    def remove_images(self, md_text):
+        pattern = (
+            r"!\[(.*?)\]\((https?://[^\s]+?\.(?:jpg|jpeg|png|gif))(?:\s+\".*?\")?\)"
+        )
+        return re.sub(pattern, "\*iamge\*", md_text)
 
     def process_item(self, item, spider):
         if not isinstance(item, SiteItem):
@@ -78,10 +84,12 @@ class SaveToPdfPipeline:
 
         os.makedirs(os.path.dirname(output_dir), exist_ok=True)
         md_text = md.markdownify(item.get("html"), heading_style="ATX")
-        md_text = self.replace_images_with_descriptions(md_text)
+        if spider.use_image_descriptor:
+            md_text = self.replace_images_with_descriptions(md_text)
+        else:
+            md_text = self.remove_images(md_text)
         md_text = self.remove_newlines(md_text)
         md_text = self.remove_svg(md_text)
-
         html_text = markdown2.markdown(md_text)
         HTML(string=html_text).write_pdf(Path(output_dir, f"{filename}.pdf"))
 

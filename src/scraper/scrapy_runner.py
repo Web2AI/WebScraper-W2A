@@ -51,7 +51,7 @@ class ScrapyRunner:
         self.errors[request_id] = str(failure)
 
     @crochet.wait_for(timeout=TIMEOUT)
-    def scrape(self, primary_url, request_id):
+    def scrape(self, primary_url, use_image_descriptor, request_id):
         # Initialize result storage for this request
         self.results[request_id] = []
         self.errors[request_id] = None
@@ -61,6 +61,7 @@ class ScrapyRunner:
             PcssSpider,
             primary_url=primary_url,
             request_id=request_id,
+            use_image_descriptor=use_image_descriptor,
         )
         deferred.addErrback(self._handle_error, request_id)
 
