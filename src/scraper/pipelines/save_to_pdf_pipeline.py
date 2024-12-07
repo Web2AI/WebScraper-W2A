@@ -19,6 +19,10 @@ logger = logging.getLogger()
 
 class SaveToPdfPipeline:
 
+    image_pattern = (
+        r"!\[(.*?)\]\((https?://[^\s]+?\.(?:jpg|jpeg|png|gif))(?:\s+\".*?\")?\)"
+    )
+
     def fetch_description(self, url):
         ai_service_url = os.getenv(
             "AI_SERVICE_URL", "http://ai-description:8000/generate-description/"
@@ -34,10 +38,7 @@ class SaveToPdfPipeline:
 
     # Replace ![](image_url) with AI description
     def replace_images_with_descriptions(self, md_text):
-        pattern = (
-            r"!\[(.*?)\]\((https?://[^\s]+?\.(?:jpg|jpeg|png|gif))(?:\s+\".*?\")?\)"
-        )
-        matches = re.findall(pattern, md_text)
+        matches = re.findall(self.image_pattern, md_text)
         logger.debug(f"Found {len(matches)} image(s) in the Markdown text")
         # tasks = {
         #     image_url: self.fetch_description(image_url)
@@ -64,10 +65,7 @@ class SaveToPdfPipeline:
         return re.sub(patern, "\*image: svg\*", md_text)
 
     def remove_images(self, md_text):
-        pattern = (
-            r"!\[(.*?)\]\((https?://[^\s]+?\.(?:jpg|jpeg|png|gif))(?:\s+\".*?\")?\)"
-        )
-        return re.sub(pattern, "\*iamge\*", md_text)
+        return re.sub(self.image_pattern, "\*image\*", md_text)
 
     def process_item(self, item, spider):
         if not isinstance(item, SiteItem):
