@@ -16,4 +16,11 @@ services:
     image: postgres:latest
     ports:
       - 5432:5432
-    # we can add volume if we want to preserve the data
+  ai-description:
+    build:
+      context: ./ai-description-service
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    tty: true
+

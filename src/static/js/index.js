@@ -1,6 +1,7 @@
 function scraperApp() {
   return {
     primaryUrl: "", // bind primary URL input
+    useImageDescriptor: false, // bind image descriptor checkbox
     loading: false, // loading state
     resultMessage: "", // feedback message to user
     resultClass: "", // CSS class for feedback
@@ -18,6 +19,7 @@ function scraperApp() {
           },
           body: JSON.stringify({
             primary_url: this.primaryUrl,
+            use_image_descriptor: this.useImageDescriptor,
           }),
         });
 

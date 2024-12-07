@@ -36,14 +36,14 @@ def history():
 @main.route("/scrape", methods=["POST"])
 def scrape():
     primary_url = request.json.get("primary_url")
-
+    use_image_descriptor = request.json.get("use_image_descriptor")
     if not primary_url:
         return jsonify({"error": "URL is required"}), 400
 
     try:
         request_id = id(request)
 
-        scrapy_runner.scrape(primary_url, request_id)
+        scrapy_runner.scrape(primary_url, use_image_descriptor, request_id)
 
         error = scrapy_runner.errors.get(request_id)
         if error:
