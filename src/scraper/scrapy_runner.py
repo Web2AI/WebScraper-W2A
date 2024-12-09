@@ -32,6 +32,7 @@ class ScrapyRunner:
                 "scraper.pipelines.save_to_html_file_pipeline.SaveToHtmlFilePipeline": 300,
                 "scraper.pipelines.save_to_md_file_pipeline.SaveToMdFilePipeline": 333,
                 "scraper.pipelines.save_to_db_pipeline.SaveToDBPipeline": 350,
+                "scraper.pipelines.save_to_chroma_pipeline.SaveToChromaPipeline": 380,
             },
         )
         # settings.set("CONCURRENT_REQUESTS", 32)
