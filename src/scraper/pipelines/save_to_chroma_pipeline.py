@@ -5,25 +5,21 @@
 
 
 # useful for handling different item types with a single interface
-# from itemadapter import ItemAdapter
-
-import datetime
 import logging
 
 import chromadb
 from chromadb import Settings
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
 
 from app import app
-from models import db
-from src.scraper.items.site_item import SiteItem
+from scraper.items.site_item import SiteItem
 
 logger = logging.getLogger()
 
 
 class SaveToChromaPipeline:
     def __init__(self, host="chatbot-chromadb-container", port=8000):
-        """Initialize ChromaDB client and embeddings."""
         self.client = chromadb.HttpClient(
             host=host,
             port=port,
@@ -31,32 +27,37 @@ class SaveToChromaPipeline:
         )
         self.embedding_function = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 
-    def process_item(self, item: SiteItem, spider):
+    def process_item(self, item, spider):
         if not isinstance(item, SiteItem):
-            return item
-        if item is None:
-            logger.error("Received None item, skipping...")
             return item
 
         with app.app_context():
             if not item.should_save:
                 return item
-        collection_name = "colection_W2A"
-        timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+
+        collection_name = "collection_W2A"
         collection = self.client.get_or_create_collection(collection_name)
         existing_docs = collection.get()
         existing_hashes = {metadata["hash"] for metadata in existing_docs["metadatas"]}
         current_hash = item.get("page_hash")
         if current_hash in existing_hashes:
-            logger.info(
+            logger.debug(
                 f"Item with hash {current_hash} already exists in ChromaDB, skipping..."
             )
             return item
-        logger.info(f"Adding new item to ChromaDB with hash {current_hash}")
-        collection.add(
-            ids=[f"{item.get('url').replace('/','')}-{timestamp}"],
-            embeddings=self.embedding_function.embed_documents(item.get("html")),
-            documents=[item.get("html")],
-            metadatas=[{"hash": current_hash}],
+        logger.debug(f"Adding new item to ChromaDB with hash {current_hash}")
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=1000, chunk_overlap=200, length_function=len
         )
+        splits_to_add = text_splitter.split_text(" ".join(item.get("json")))
+        if splits_to_add:
+            collection.add(
+                ids=[
+                    f"split_{collection_name}_{current_hash}_{i}"
+                    for i, _ in enumerate(splits_to_add)
+                ],
+                embeddings=self.embedding_function.embed_documents(splits_to_add),
+                documents=splits_to_add,
+                metadatas=[{"hash": current_hash} for _ in enumerate(splits_to_add)],
+            )
         return item
