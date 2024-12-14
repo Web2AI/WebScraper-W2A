@@ -6,6 +6,7 @@
 
 # useful for handling different item types with a single interface
 import logging
+from datetime import date
 
 import chromadb
 from chromadb import Settings
@@ -58,6 +59,13 @@ class SaveToChromaPipeline:
                 ],
                 embeddings=self.embedding_function.embed_documents(splits_to_add),
                 documents=splits_to_add,
-                metadatas=[{"hash": current_hash} for _ in enumerate(splits_to_add)],
+                metadatas=[
+                    {
+                        "hash": current_hash,
+                        "url": item.get("url"),
+                        "add_date": date.today(),
+                    }
+                    for _ in enumerate(splits_to_add)
+                ],
             )
         return item
