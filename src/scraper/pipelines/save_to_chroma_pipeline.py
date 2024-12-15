@@ -63,7 +63,7 @@ class SaveToChromaPipeline:
                     {
                         "hash": current_hash,
                         "url": item.get("url"),
-                        "add_date": date.today(),
+                        "add_date": str(date.today()),
                     }
                     for _ in enumerate(splits_to_add)
                 ],
