@@ -28,9 +28,6 @@ class SaveToDBPipeline:
             try:
                 if not item.should_save:
                     return item
-
-                # logger.debug(f"Saving {item["url"]} to db")
-
                 db.session.merge(item.model)
                 db.session.commit()
             except IntegrityError:

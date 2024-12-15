@@ -91,7 +91,6 @@ class PcssSpider(scrapy.Spider):
             item["json"] = self.common_tags_filter.get_context()
 
         item["page_hash"] = self.generate_sha256_hash(item["json"])
-        logger.info(f"Page hash: {item['page_hash']}")
         if parent_url:
             item["parent_url"] = parent_url
 

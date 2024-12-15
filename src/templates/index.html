@@ -1,5 +1,5 @@
-{% extends "base.html" %} {% block title %}Web2AI{% endblock %} {% block
-content %}
+{% extends "base.html" %} {% block title %}Web2AI{% endblock %} {% block content
+%}
 <div
   class="bg-white shadow-lg rounded-lg p-8 w-full max-w-md"
   x-data="scraperApp()"
@@ -19,6 +19,18 @@ content %}
       placeholder="Provide URL"
       x-model="primaryUrl"
     />
+    <!--checkbox use image descriptor -->
+    <div class="flex items-center space-x-2">
+      <input
+        type="checkbox"
+        name="useImageDescriptor"
+        id="useImageDescriptor"
+        class="h-4 mx-2 w-4 text-blue-500"
+        x-model="useImageDescriptor"
+      />
+      <label for="useImageDescriptor">Use image descriptor</label>
+    </div>
+
     <button
       type="submit"
       id="submitbutton"
