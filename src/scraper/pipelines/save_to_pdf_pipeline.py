@@ -8,7 +8,6 @@ from pathlib import Path
 import httpx
 import markdown2
 import markdownify as md
-import requests
 from weasyprint import HTML
 
 from app import app

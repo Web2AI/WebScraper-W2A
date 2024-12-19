@@ -32,6 +32,7 @@ class ScrapyRunner:
                 # "scraper.pipelines.save_to_html_file_pipeline.SaveToHtmlFilePipeline": 300, # Obsolete
                 "scraper.pipelines.save_to_pdf_pipeline.SaveToPdfPipeline": 333,
                 "scraper.pipelines.save_to_db_pipeline.SaveToDBPipeline": 350,
+                "scraper.pipelines.save_to_chroma_pipeline.SaveToChromaPipeline": 380,
             },
         )
         # settings.set("CONCURRENT_REQUESTS", 32)
@@ -51,7 +52,7 @@ class ScrapyRunner:
         self.errors[request_id] = str(failure)
 
     @crochet.wait_for(timeout=TIMEOUT)
-    def scrape(self, primary_url, use_image_descriptor, request_id):
+    def scrape(self, primary_url, use_image_descriptor, depth_limit, request_id):
         # Initialize result storage for this request
         self.results[request_id] = []
         self.errors[request_id] = None
@@ -62,6 +63,7 @@ class ScrapyRunner:
             primary_url=primary_url,
             request_id=request_id,
             use_image_descriptor=use_image_descriptor,
+            depth_limit=depth_limit,
         )
         deferred.addErrback(self._handle_error, request_id)
 

@@ -1,5 +1,5 @@
 services:
-  web:
+  scraper:
     env_file: .env.dev
     build:
       context: .
@@ -11,11 +11,25 @@ services:
     tty: true
     depends_on:
       - db
+      - chatbot-chromadb
   db:
     env_file: .env.dev
     image: postgres:latest
     ports:
       - 5432:5432
+  chatbot-chromadb:
+    image: chromadb/chroma:0.5.7
+    volumes:
+      - chatbot-chromaDB-volume:/chroma/chroma
+    environment:
+      - IS_PERSISTENT=TRUE
+      - PERSIST_DIRECTORY=/chroma/chroma
+      - ANONYMIZED_TELEMETRY=${ANONYMIZED_TELEMETRY:-FALSE}
+      - ALLOW_RESET=TRUE
+    ports:
+      - 8001:8000
+    networks:
+      - default
   ai-description:
     build:
       context: ./ai-description-service
@@ -24,3 +38,11 @@ services:
       - 8000:8000
     tty: true
 
+volumes:
+  chatbot-chromaDB-volume:
+
+networks:
+  default:
+    driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 1450

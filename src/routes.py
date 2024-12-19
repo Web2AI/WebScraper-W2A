@@ -1,7 +1,9 @@
 import logging
 from urllib.parse import unquote
 
-from flask import Blueprint, jsonify, render_template, request
+from flask import Blueprint
+from flask import current_app as app
+from flask import jsonify, render_template, request
 
 from models import AttachmentModel, SiteModel, db
 from scraper.scrapy_runner import ScrapyRunner
@@ -22,6 +24,7 @@ def index():
 def recreate_db():
     db.drop_all()
     db.create_all()
+    app.chromadb_client.reset()
     sites = SiteModel.query.all()
     message = "Database has been recreated successfully!"
     return render_template("history.html", sites=sites, message=message)
@@ -37,13 +40,14 @@ def history():
 def scrape():
     primary_url = request.json.get("primary_url")
     use_image_descriptor = request.json.get("use_image_descriptor")
+    depth_limit = request.json.get("depth_limit")
     if not primary_url:
         return jsonify({"error": "URL is required"}), 400
 
     try:
         request_id = id(request)
 
-        scrapy_runner.scrape(primary_url, use_image_descriptor, request_id)
+        scrapy_runner.scrape(primary_url, use_image_descriptor, depth_limit, request_id)
 
         error = scrapy_runner.errors.get(request_id)
         if error:
