@@ -44,8 +44,9 @@ docker exec -it webscraper-w2a-db-1 psql -U postgres -d scraperdb
 ```
 
 ### Production
+Use the `docker-compose.yml` file instead of `docker-compose.dev.yml`. 
 
-*To be described.*
+Make sure to adjust the `.env` variables locally as required.
 
 ## CI checks
 The project uses GitHub Actions for continuous integration to ensure code quality. The following checks are run automatically on each push:
@@ -74,6 +75,7 @@ WebScraper-W2A/
 │
 ├── .github/                        # GitHub configuration files
 ├── .trunk/                         # Trunk-related configuration
+├── ai-description-service/         # AI description service for generating image descriptions
 ├── out/                            # Output directory for scraped data
 ├── src/                            # Source code directory
 │   ├── jobs/                       # Scheduled jobs for scraping
@@ -88,9 +90,11 @@ WebScraper-W2A/
 │   ├── routes.py                   # Flask routes
 │   └── scheduled_jobs_config.py    # Configuration for scheduled jobs
 ├── .dockerignore                   # Docker ignore file
+├── .env                            # Environment variables for production
 ├── .env.dev                        # Environment variables for development
 ├── .gitignore                      # Git ignore file
 ├── docker-compose.dev.yml          # Docker Compose configuration for development
+├── docker-compose.yml              # Docker Compose configuration for production
 ├── Dockerfile                      # Dockerfile for production
 ├── Dockerfile.dev                  # Dockerfile for development
 ├── LICENSE                         # License file (Apache 2.0)
@@ -98,6 +102,9 @@ WebScraper-W2A/
 ├── requirements.txt                # Python dependencies
 └── setup.cfg                       # Configuration for setup tools
 ```
+
+## Testing
+A dedicated set of static HTML files designed specifically for testing purposes is available at https://github.com/Web2AI/test-site.
 
 ## Contributing
 Contributions are welcome! Please fork the repository and submit a pull request.
