@@ -8,12 +8,9 @@ WORKDIR /w2a-scraper/app
 COPY requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt
 
-COPY . .
-
 ENV FLASK_APP=app
 ENV FLASK_ENV=development
-
-EXPOSE 5000
+ENV PROJECT_DIR=/w2a-scraper/app
 
 WORKDIR /w2a-scraper/app/src
 
