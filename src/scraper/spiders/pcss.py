@@ -22,6 +22,7 @@ class PcssSpider(scrapy.Spider):
     allowed_domains = [  # all pcss.pl and pionier.net.pl subdomains
         "pcss.pl",
         "pionier.net.pl",
+        "host.docker.internal",
     ]
     denied_links = r"\.(zip|exe|rar|tar|gz|7z|docx|mp3|mp4|xml)$"
     downloadable_extensions = r"\.(pdf|doc|docx)$"
