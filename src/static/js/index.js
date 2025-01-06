@@ -5,6 +5,7 @@ function scraperApp() {
     loading: false, // loading state
     resultMessage: "", // feedback message to user
     resultClass: "", // CSS class for feedback
+    depthLimit: 5,
 
     async submitForm() {
       this.loading = true;
@@ -20,6 +21,7 @@ function scraperApp() {
           body: JSON.stringify({
             primary_url: this.primaryUrl,
             use_image_descriptor: this.useImageDescriptor,
+            depth_limit: this.depthLimit,
           }),
         });
 

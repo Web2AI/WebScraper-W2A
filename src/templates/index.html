@@ -30,6 +30,18 @@
       />
       <label for="useImageDescriptor">Use image descriptor</label>
     </div>
+    <div class="space-y-2">
+      <label for="depthLimit" class="block font-semibold">Depth Limit</label>
+      <input
+        type="number"
+        name="depthLimit"
+        id="depthLimit"
+        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        x-model.number="depthLimit"
+        placeholder="Enter depth limit"
+        min="0"
+      />
+    </div>
 
     <button
       type="submit"

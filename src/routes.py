@@ -4,6 +4,7 @@ from urllib.parse import unquote
 from flask import Blueprint
 from flask import current_app as app
 from flask import jsonify, render_template, request
+from scrapy.utils.serialize import ScrapyJSONEncoder
 
 from models import AttachmentModel, SiteModel, db
 from scraper.scrapy_runner import ScrapyRunner
@@ -54,7 +55,7 @@ def scrape():
             return jsonify({"error": error}), 500
 
         results = scrapy_runner.results.get(request_id)
-        return jsonify({"results": results}), 200
+        return ScrapyJSONEncoder().encode({"results": results}), 200
 
     except Exception as e:
         logger.exception("An exception occurred during scraping")
