@@ -1,9 +1,9 @@
 services:
   scraper:
-    env_file: .env.dev
+    env_file: .env
     build:
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     volumes:
       - .:/w2a-scraper/app
     ports:
@@ -13,7 +13,7 @@ services:
       - db
       - chatbot-chromadb
   db:
-    env_file: .env.dev
+    env_file: .env
     image: postgres:latest
     ports:
       - 5432:5432

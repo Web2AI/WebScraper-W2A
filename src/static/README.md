@@ -1,1 +1,0 @@
-This folder is for static things like java, css or images

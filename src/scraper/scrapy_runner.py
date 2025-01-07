@@ -6,7 +6,8 @@ from scrapy.crawler import CrawlerRunner
 from scrapy.settings import Settings
 from scrapy.signalmanager import dispatcher
 
-from business.scraper.spiders.pcss import PcssSpider
+from constants import TIMEOUT
+from scraper.spiders.pcss import PcssSpider
 
 crochet.setup()  # Initialize crochet
 
@@ -28,9 +29,15 @@ class ScrapyRunner:
         settings.set(
             "ITEM_PIPELINES",
             {
-                "business.scraper.pipelines.save_to_html_file_pipeline.SaveToHtmlFilePipeline": 300,
+                # "scraper.pipelines.save_to_html_file_pipeline.SaveToHtmlFilePipeline": 300, # Obsolete
+                "scraper.pipelines.save_to_pdf_pipeline.SaveToPdfPipeline": 333,
+                "scraper.pipelines.save_to_db_pipeline.SaveToDBPipeline": 350,
+                "scraper.pipelines.save_to_chroma_pipeline.SaveToChromaPipeline": 380,
             },
         )
+        # settings.set("CONCURRENT_REQUESTS", 32)
+        # settings.set("CONCURRENT_REQUESTS_PER_DOMAIN", 16)
+        # settings.set("CONCURRENT_REQUESTS_PER_IP", 16)
         settings.set("LOG_LEVEL", "DEBUG")
 
         return settings
@@ -44,8 +51,8 @@ class ScrapyRunner:
     def _handle_error(self, failure, request_id):
         self.errors[request_id] = str(failure)
 
-    @crochet.wait_for(timeout=60.0)
-    def scrape(self, primary_url, secondary_url, request_id):
+    @crochet.wait_for(timeout=TIMEOUT)
+    def scrape(self, primary_url, use_image_descriptor, depth_limit, request_id):
         # Initialize result storage for this request
         self.results[request_id] = []
         self.errors[request_id] = None
@@ -54,8 +61,9 @@ class ScrapyRunner:
         deferred = self._runner.crawl(
             PcssSpider,
             primary_url=primary_url,
-            secondary_url=secondary_url,
             request_id=request_id,
+            use_image_descriptor=use_image_descriptor,
+            depth_limit=depth_limit,
         )
         deferred.addErrback(self._handle_error, request_id)
 

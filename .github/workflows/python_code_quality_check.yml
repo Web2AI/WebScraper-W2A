@@ -18,7 +18,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -r config/requirements.txt
+          python -m pip install -r requirements.txt
 
       - name: Run Black
         run: black --check .
@@ -27,7 +27,7 @@ jobs:
         run: mypy .
 
       - name: Run isort
-        run: isort --check-only .
+        run: isort --check-only --profile black .
 
       - name: Run Bandit
         run: bandit -r .

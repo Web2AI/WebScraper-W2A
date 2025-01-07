@@ -1,10 +1,11 @@
 function scraperApp() {
   return {
     primaryUrl: "", // bind primary URL input
-    secondaryUrl: "", // bind secondary URL input (optional)
+    useImageDescriptor: false, // bind image descriptor checkbox
     loading: false, // loading state
     resultMessage: "", // feedback message to user
     resultClass: "", // CSS class for feedback
+    depthLimit: 5,
 
     async submitForm() {
       this.loading = true;
@@ -19,7 +20,8 @@ function scraperApp() {
           },
           body: JSON.stringify({
             primary_url: this.primaryUrl,
-            secondary_url: this.secondaryUrl,
+            use_image_descriptor: this.useImageDescriptor,
+            depth_limit: this.depthLimit,
           }),
         });
 
@@ -28,8 +30,9 @@ function scraperApp() {
         console.log(data); // TODO: remove from final
 
         if (data.results) {
+          const websites = data.results.filter((result) => result.json); // TODO: find more robust way for counting scraped websites
           this.resultMessage =
-            "Success: " + data.results.length + " website(s) scraped";
+            "Success: " + websites.length + " website(s) scraped";
           this.resultClass = "text-green-500";
         } else if (data.error) {
           this.resultMessage = "Error: " + data.error;

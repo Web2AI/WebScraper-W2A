@@ -34,10 +34,13 @@ class CustomFormatter(logging.Formatter):
 
 # Configure logging
 def configure_logger():
+    handler = logging.StreamHandler()
+    handler.setFormatter(CustomFormatter())
+
     logging.basicConfig(
         level=logging.DEBUG,  # Set log level to DEBUG
         format="%(asctime)s [%(levelname)s] %(message)s",
-        handlers=[logging.StreamHandler()],
+        handlers=[handler],
     )
 
     # Set Scrapy logging level to INFO
@@ -47,9 +50,12 @@ def configure_logger():
     # Set Flask logging level to INFO
     logging.getLogger("werkzeug").setLevel(logging.INFO)
 
-    # Apply the custom formatter to all handlers
-    logger = logging.getLogger()  # Get the root logger
-    for handler in logger.handlers:
-        handler.setFormatter(CustomFormatter())
+    # Set httpx logging level to WARNING
+    logging.getLogger("httpx").setLevel(logging.WARNING)
+    logging.getLogger("httpcore").setLevel(logging.WARNING)
 
-    return logger
+    # TODO improve logging
+    # logging.getLogger("markdown2").setLevel(logging.CRITICAL)
+    # logging.getLogger("weasyprint").setLevel(logging.CRITICAL)
+    # logging.getLogger("tzlocal").setLevel(logging.CRITICAL)
+    # logging.getLogger("fontTools").setLevel(logging.CRITICAL)

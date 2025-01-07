@@ -20,3 +20,5 @@ pcss-*.html
 
 # Output files
 out/*.html
+out/*.md
+out/*.pdf

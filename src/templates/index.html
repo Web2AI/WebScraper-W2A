@@ -1,11 +1,13 @@
-{% extends "base.html" %} {% block title %}Basic Scraper{% endblock %} {% block
-content %}
+{% extends "base.html" %} {% block title %}Web2AI{% endblock %} {% block content
+%}
 <div
   class="bg-white shadow-lg rounded-lg p-8 w-full max-w-md"
   x-data="scraperApp()"
 >
-  <h1 class="text-3xl font-bold text-center mb-4">Basic Scraper</h1>
-  <h2 class="text-xl font-semibold text-center mb-8">Work-In-Progress</h2>
+  <h1 class="text-3xl font-bold text-center mb-4">Web2AI Web Scraper</h1>
+  <h2 class="text-xl font-semibold text-center mb-8">
+    Extracting data from websites
+  </h2>
 
   <!-- Form -->
   <form @submit.prevent="submitForm" class="space-y-4">
@@ -17,13 +19,30 @@ content %}
       placeholder="Provide URL"
       x-model="primaryUrl"
     />
-    <input
-      type="text"
-      name="secondaryUrl"
-      class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-      placeholder="Provide secondary URL (optional context)"
-      x-model="secondaryUrl"
-    />
+    <!--checkbox use image descriptor -->
+    <div class="flex items-center space-x-2">
+      <input
+        type="checkbox"
+        name="useImageDescriptor"
+        id="useImageDescriptor"
+        class="h-4 mx-2 w-4 text-blue-500"
+        x-model="useImageDescriptor"
+      />
+      <label for="useImageDescriptor">Use image descriptor</label>
+    </div>
+    <div class="space-y-2">
+      <label for="depthLimit" class="block font-semibold">Depth Limit</label>
+      <input
+        type="number"
+        name="depthLimit"
+        id="depthLimit"
+        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        x-model.number="depthLimit"
+        placeholder="Enter depth limit"
+        min="0"
+      />
+    </div>
+
     <button
       type="submit"
       id="submitbutton"
@@ -32,6 +51,20 @@ content %}
     >
       Scrape
     </button>
+    <div class="flex space-x-2">
+      <a
+        href="/history"
+        class="block w-full bg-white text-blue-500 font-semibold py-2 rounded-lg hover:bg-gray-100 transition duration-200 text-center"
+      >
+        History
+      </a>
+      <a
+        href="/jobs"
+        class="block w-full bg-white text-blue-500 font-semibold py-2 rounded-lg hover:bg-gray-100 transition duration-200 text-center"
+      >
+        Jobs
+      </a>
+    </div>
   </form>
 
   <!-- Feedback Area -->
