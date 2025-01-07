@@ -22,3 +22,6 @@ pcss-*.html
 out/*.html
 out/*.md
 out/*.pdf
+
+# Chroma data
+chroma_data/
